@@ -1,30 +1,30 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Создать аккаунт</title>
 </head>
 <body>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<p>Создать новый аккаунт</p>
-	<form th:method="POST" th:action="@{/register}" th:object="${user}">
+	<div class="">
 	
 		<label for="login">Логин (имя пользователя):</label>
-		<input type="text" value="login" id="login" th:field=*{name}/>
-		<span style="color:red;" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</span>
+		<input type="text" id="login" class="input__login"/>
 		<br/>
 				
 		<label for="password">Пароль:</label>
-		<input type="text" value="password" id="password" th:field="*{password}"/>
-		<span style="color:red;" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Name error</span>
+		<input type="text"  id="password" class="input__password"/>
 		<br/>
 		
 		<label for="passwordConfirm">Подтвердите пароль:</label>
-		<input type="text" id="passwordConfirm" th:field="*{passwordConfirm}"/>
-		<span style="color:red;" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}">Name error</span>
+		<input type="text" id="passwordConfirm" class="input__password__confirm"/>
 		<br/>
+
+		<button type="submit" class="button__register">Зарегистрировать</button>
+		<p class="text__server__respose" style="display: none">Value</p>
 		
-		<input type="submit"/>
-		
-	</form>
+	</div>
+	<script type="text/javascript" src="js/register.js"></script>
 </body>
 </html>

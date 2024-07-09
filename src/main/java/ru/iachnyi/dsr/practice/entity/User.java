@@ -18,9 +18,11 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import lombok.Data;
 
 @Entity
 @Table(name="users")
+@Data
 public class User implements UserDetails{
 	
 	@Id
@@ -30,50 +32,13 @@ public class User implements UserDetails{
 	@Column(unique = true)
 	private String name;
 	private String password;
-	@Transient
-	private String passwordConfirm;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Role> roles;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	@Override
 	public String getPassword() {
 		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getPasswordConfirm() {
-		return passwordConfirm;
-	}
-
-	public void setPasswordConfirm(String passwordConfirm) {
-		this.passwordConfirm = passwordConfirm;
-	}
-
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
 	}
 
 	@Override
@@ -85,6 +50,8 @@ public class User implements UserDetails{
 	public String getUsername() {
 		return getName();
 	}
+
+
 	
 	
 }

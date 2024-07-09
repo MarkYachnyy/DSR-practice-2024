@@ -2,6 +2,8 @@ package ru.iachnyi.dsr.practice.service;
 
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,8 +17,9 @@ import ru.iachnyi.dsr.practice.repository.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService{
-	
-	@Autowired
+
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    @Autowired
 	UserRepository userRepository;
 	
 	@Autowired
@@ -24,9 +27,7 @@ public class UserService implements UserDetailsService{
 	
 	public boolean saveUser(User user) {
         User userFromDB = userRepository.findByName(user.getUsername()).orElse(null);
-
         if (userFromDB != null) {
-        	System.out.println("such user found");
             return false;
         }
 
@@ -38,6 +39,6 @@ public class UserService implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return userRepository.findByName(username).orElseThrow(() -> new UsernameNotFoundException("User with name " + username + " not found exception"));
+		return userRepository.findByName(username).orElseThrow(() -> new UsernameNotFoundException(username));
 	}
 }

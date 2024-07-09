@@ -23,9 +23,11 @@ public class WebSecurityConfig {
 		return http.anonymous(AbstractHttpConfigurer::disable).
 				httpBasic(Customizer.withDefaults()).
 				authorizeHttpRequests(auth -> auth
-				.requestMatchers("/welcome", "/login", "/register").permitAll()
+				/*.requestMatchers("/welcome", "/login", "/register").permitAll()
 				.requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
-				.requestMatchers("/profile").authenticated())
+				.requestMatchers("/profile").authenticated()*/
+						.anyRequest().permitAll())
+				.csrf(AbstractHttpConfigurer::disable)
 				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/profile").permitAll()).build();
 	}
 	
