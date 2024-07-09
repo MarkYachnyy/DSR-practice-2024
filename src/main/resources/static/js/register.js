@@ -6,6 +6,9 @@ TextServerResponse = $('.text__server__respose')[0];
 let ValuesAreValid = true;
 
 ButtonConfirm.addEventListener('click', () => {
+    $('.text__server__respose').show();
+    TextServerResponse.innerText = "Обрабатываем ваш запрос...";
+    TextServerResponse.style.color = "gray";
     validateValues();
     if(ValuesAreValid){
        setRegisterAjax();
@@ -44,7 +47,10 @@ function ProcessServerResponse(response){
     } else {
         TextServerResponse.innerText = response.success;
         TextServerResponse.style.color = "green";
+        InputLogin.value = "";
+        InputPassword.value = "";
+        InputPasswordConfirm.value = "";
+        $(".link__login").show();
     }
-    $('.text__server__respose').show();
 }
 

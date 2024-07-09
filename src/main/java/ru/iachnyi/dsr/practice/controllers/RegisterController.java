@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import ru.iachnyi.dsr.practice.entity.User;
-import ru.iachnyi.dsr.practice.repository.UserRepository;
 import ru.iachnyi.dsr.practice.response.SimpleSuccessOrErrorResponse;
 import ru.iachnyi.dsr.practice.service.UserService;
 
@@ -22,9 +21,9 @@ public class RegisterController {
     public SimpleSuccessOrErrorResponse registerUser(@RequestBody User user) {
         SimpleSuccessOrErrorResponse response = new SimpleSuccessOrErrorResponse();
         if (userRepository.saveUser(user)) {
-            response.setSuccess("Account successfully registered");
+            response.setSuccess("Аккаунт успешно зарегистрирован");
         } else {
-            response.setError("An account with such username already exists");
+            response.setError("Аккаунт с таким именем уже существует");
         }
         return response;
     }
