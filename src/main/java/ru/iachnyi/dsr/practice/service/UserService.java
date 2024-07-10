@@ -19,11 +19,12 @@ import ru.iachnyi.dsr.practice.repository.UserRepository;
 public class UserService implements UserDetailsService{
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	
 	@Autowired
-	BCryptPasswordEncoder bCryptPasswordEncoder;
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public boolean saveUser(User user) {
         User userFromDB = userRepository.findByName(user.getUsername()).orElse(null);

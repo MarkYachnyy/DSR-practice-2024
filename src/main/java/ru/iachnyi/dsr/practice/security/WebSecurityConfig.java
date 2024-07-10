@@ -20,13 +20,13 @@ public class WebSecurityConfig {
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		//TODO:Пофиксить доступ к скриптам
 		return http.anonymous(AbstractHttpConfigurer::disable).
 				httpBasic(Customizer.withDefaults()).
 				authorizeHttpRequests(auth -> auth
-				/*.requestMatchers("/welcome", "/login", "/register").permitAll()
+				.requestMatchers("/welcome", "/login", "/register").permitAll()
 				.requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
-				.requestMatchers("/profile").authenticated()*/
-						.anyRequest().permitAll())
+				.requestMatchers("/profile").authenticated())
 				.csrf(AbstractHttpConfigurer::disable)
 				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/profile").permitAll()).build();
 	}

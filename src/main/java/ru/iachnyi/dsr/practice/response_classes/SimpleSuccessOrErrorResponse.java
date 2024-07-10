@@ -1,4 +1,4 @@
-package ru.iachnyi.dsr.practice.response;
+package ru.iachnyi.dsr.practice.response_classes;
 
 import lombok.Data;
 

@@ -6,6 +6,6 @@ import lombok.Data;
 @Embeddable
 @Data
 public class FriendRequestPeople{
-    private int senderId;
-    private int receiverId;
+    private Long senderId;
+    private Long receiverId;
 }

@@ -13,6 +13,7 @@ ButtonConfirm.addEventListener('click', () => {
     if(ValuesAreValid){
        setRegisterAjax();
     } else {
+        //TODO:Сделать нормальный обработчик
         console.log("values are invalid");
     }
 });

@@ -11,6 +11,8 @@ import java.sql.Date;
 public class FriendRequest {
     @EmbeddedId
     private FriendRequestPeople people;
+
+    @Enumerated(EnumType.STRING)
     private FriendRequestStatus status;
     private Date date;
 }

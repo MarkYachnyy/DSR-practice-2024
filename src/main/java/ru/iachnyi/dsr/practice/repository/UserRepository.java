@@ -8,7 +8,4 @@ import ru.iachnyi.dsr.practice.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 	Optional<User> findByName(String username);
-
-	@Override
-	Optional<User> findById(Long aLong);
 }

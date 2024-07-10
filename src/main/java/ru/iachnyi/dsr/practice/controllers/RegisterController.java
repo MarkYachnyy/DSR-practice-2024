@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import ru.iachnyi.dsr.practice.entity.User;
-import ru.iachnyi.dsr.practice.response.SimpleSuccessOrErrorResponse;
+import ru.iachnyi.dsr.practice.response_classes.SimpleSuccessOrErrorResponse;
 import ru.iachnyi.dsr.practice.service.UserService;
 
 @RestController
