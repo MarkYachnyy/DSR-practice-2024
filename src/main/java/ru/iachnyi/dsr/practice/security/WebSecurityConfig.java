@@ -14,28 +14,30 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-	
-	@Autowired
-	private CustomAuthenticationProvider authProvider;
-	
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		//TODO:Пофиксить доступ к скриптам
-		return http.anonymous(AbstractHttpConfigurer::disable).
-				httpBasic(Customizer.withDefaults()).
-				authorizeHttpRequests(auth -> auth
-				.requestMatchers("/welcome", "/login", "/register").permitAll()
-				.requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
-				.requestMatchers("/profile").authenticated())
-				.csrf(AbstractHttpConfigurer::disable)
-				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/profile").permitAll()).build();
-	}
-	
-	
-	@Bean
+
+    @Autowired
+    private CustomAuthenticationProvider authProvider;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        //TODO:Пофиксить доступ к скриптам
+        return http.anonymous(AbstractHttpConfigurer::disable).
+                httpBasic(Customizer.withDefaults()).
+                authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/welcome", "/login", "/register").permitAll()
+                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/profile").authenticated()
+                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("js/**").authenticated())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/profile").permitAll()).build();
+    }
+
+
+    @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = 
-            http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(authProvider);
         return authenticationManagerBuilder.build();
     }

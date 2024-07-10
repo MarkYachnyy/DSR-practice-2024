@@ -5,8 +5,9 @@ function getFriendsList(){
 }
 
 function generateFriendsListHTML(friends_list){
+    console.log(friends_list)
     res = "";
-    for(friend in friends_list){
+    for(friend of friends_list){
         res += `<p>${friend.name} | <span style="color:green">в друзьях с ${friend.date}</span></p>`;
     }
     DivFriends.innerHTML += res;
