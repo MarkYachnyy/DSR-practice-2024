@@ -16,5 +16,7 @@ public interface FriendsRepository extends JpaRepository<FriendRequest, FriendRe
     @Query(value = "SELECT * FROM friends WHERE sender_id = ?1 AND status = ?2", nativeQuery = true)
     List<FriendRequest> findAllRequestsBySenderId(long senderId, String status);
 
+    @Query(value = "SELECT * FROM friends WHERE sender_id = ?1 AND receiver_id = ?2", nativeQuery = true)
+    List<FriendRequest> findAllRequestsBySenderIdAndReceiverId(long senderId, long receiverId);
 
 }
