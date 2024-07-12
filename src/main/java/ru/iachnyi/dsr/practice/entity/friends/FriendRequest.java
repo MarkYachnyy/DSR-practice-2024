@@ -10,7 +10,7 @@ import java.sql.Date;
 @Data
 public class FriendRequest {
     @EmbeddedId
-    private FriendRequestPeople people;
+    private FriendRequestId people;
 
     @Enumerated(EnumType.STRING)
     private FriendRequestStatus status;

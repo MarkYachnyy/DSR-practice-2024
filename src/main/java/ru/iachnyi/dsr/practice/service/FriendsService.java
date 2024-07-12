@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.iachnyi.dsr.practice.entity.User;
 import ru.iachnyi.dsr.practice.entity.friends.FriendRequest;
-import ru.iachnyi.dsr.practice.entity.friends.FriendRequestPeople;
+import ru.iachnyi.dsr.practice.entity.friends.FriendRequestId;
 import ru.iachnyi.dsr.practice.entity.friends.FriendRequestStatus;
 import ru.iachnyi.dsr.practice.repository.FriendsRepository;
 import ru.iachnyi.dsr.practice.repository.UserRepository;
@@ -13,7 +13,6 @@ import ru.iachnyi.dsr.practice.response_classes.NameAndDateFriendRelation;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,7 +53,7 @@ public class FriendsService {
 
     public void sendFriendRequest(Long from , Long to) {
         FriendRequest friendRequest = new FriendRequest();
-        friendRequest.setPeople(new FriendRequestPeople(from, to));
+        friendRequest.setPeople(new FriendRequestId(from, to));
         friendRequest.setStatus(FriendRequestStatus.SENT);
         friendRequest.setDate(Date.valueOf(LocalDate.now()));
         friendsRepository.save(friendRequest);
@@ -71,9 +70,9 @@ public class FriendsService {
         friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
         friendRequest.setDate(Date.valueOf(LocalDate.now()));
         if(!list1.isEmpty()) {
-            friendRequest.setPeople(new FriendRequestPeople(list1.getFirst().getPeople().getSenderId(), list1.getFirst().getPeople().getReceiverId()));
+            friendRequest.setPeople(new FriendRequestId(list1.getFirst().getPeople().getSenderId(), list1.getFirst().getPeople().getReceiverId()));
         } else {
-            friendRequest.setPeople(new FriendRequestPeople(firstId, secondId));
+            friendRequest.setPeople(new FriendRequestId(firstId, secondId));
         }
         friendsRepository.save(friendRequest);
     }
