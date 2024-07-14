@@ -1,11 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Профиль пользователя</title>
+    <meta charset="UTF-8">
+    <title>Профиль пользователя</title>
+    <link rel="stylesheet" type="text/css" href="css/profile.css">
 </head>
 <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <div class="overlay__create__new__payment">
+        <div class="overlay__content">
+            <h2 style="background: white">Создать новый счёт</h2>
+            <div style="display: flex; flex-direction: row; background: white;">
+                <div class="overlay__general__info" style="width:300px; display: flex; flex-direction: column; align-items: center;">
+                    <h3>Общая информация</h3>
+                    <label for="input-new-spending-name">Название счёта</label>
+                    <input class="input__new__spending__name" id="input-new-spending-name">
+                    <label for="input-new-spending-date">Дата</label>
+                    <input type="date" class="input__new__spending__date" id="input-new-spending-date">
+                </div>
+                <div class="overlay__spending__participants" style="display: flex; flex-direction: column; align-items: center;">
+                    <h3>Участники счёта</h3>
+                    <div class="div__other__spending__participants" style="height: 200px; width: 350px; overflow-y: scroll;">
+
+                    </div>
+                    <h4>Добавьте из друзей:</h4>
+                    <div class="div__overlay__friends" style="height: 200px; width: 350px ;overflow-y: scroll;">
+
+                    </div>
+                </div>
+                <div class="overlay__overall__amount" style="width:300px; display: flex; flex-direction: column; align-items: center;">
+                    <h3>Сумма счёта</h3>
+                    <p><input class="input__overall__amount" value="0"> рублей</p>
+                    <h3>Способ разделения</h3>
+                    <input type="radio" value="" id="radio-button-equal-parts">
+                    <label for="radio-button-equal-parts">Равные доли</label>
+                </div>
+            </div>
+            <p class="text__spending__creation__status"></p>
+            <button class="button__confirm__new__spending">СОЗДАТЬ</button>
+        </div>
+    </div>
     <h1>Это ваш профиль, <span class="span__username"></span> <a href="/logout">Выйти</a></h1>
     <div class="content" style="display: flex; flex-direction: row;">
         <div class="div__friends">
@@ -35,6 +69,7 @@
 
         <div class="div__spendings">
             <h2>Счета</h2>
+            <button class="button__create__new__spending">Создать новый счёт</button>
             <span class="span__spendings__loading__message" style="color: gray">Загружаем счета...</span>
             <div class="div__all__spendings">
 

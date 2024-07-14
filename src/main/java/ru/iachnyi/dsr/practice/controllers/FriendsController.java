@@ -38,7 +38,6 @@ public class FriendsController {
     @GetMapping("/api/friends/all-requests-received")
     public List<NameAndDateFriendRelation> getRequestsReceived() {
         List<NameAndDateFriendRelation> res = friendsService.findAllRequestsReceivedByUser(securityUtils.getCurrentUserId());
-        log.info("res length: {}", res.size());
         return res;
     }
 

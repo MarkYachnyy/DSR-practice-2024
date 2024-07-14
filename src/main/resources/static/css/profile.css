@@ -1,0 +1,27 @@
+.overlay__create__new__payment{
+    background-color: rgba(0,0,0,0.3);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.overlay__general__info{
+    display: flex;
+    flex-direction: column;
+}
+
+.overlay__general__info, .overlay__overall__amount, .overlay__spending__participants{
+    padding: 10px;
+}
+
+.overlay__content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

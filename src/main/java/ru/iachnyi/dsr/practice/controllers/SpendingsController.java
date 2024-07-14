@@ -1,26 +1,26 @@
 package ru.iachnyi.dsr.practice.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.iachnyi.dsr.practice.entity.Spending;
-import ru.iachnyi.dsr.practice.repository.SpendingRepository;
+import ru.iachnyi.dsr.practice.entity.debt.Debt;
 import ru.iachnyi.dsr.practice.repository.UserRepository;
+import ru.iachnyi.dsr.practice.response_classes.SimpleSuccessOrErrorResponse;
 import ru.iachnyi.dsr.practice.response_classes.SpendingResponse;
 import ru.iachnyi.dsr.practice.security.SecurityUtils;
 import ru.iachnyi.dsr.practice.service.SpendingService;
-import ru.iachnyi.dsr.practice.service.UserService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+
+import java.sql.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 public class SpendingsController {
 
+    private static final Logger log = LoggerFactory.getLogger(SpendingsController.class);
     @Autowired
     SecurityUtils securityUtils;
 
@@ -41,6 +41,16 @@ public class SpendingsController {
         return null;
     }
 
+    @PostMapping("/api/spendings/new")
+    public SimpleSuccessOrErrorResponse createSpending(@RequestBody SpendingResponse spending) {
+        SimpleSuccessOrErrorResponse res = new SimpleSuccessOrErrorResponse();
+        Spending toSave = unboxSpending(spending);
+        toSave.setId(null);
+        spendingService.save(toSave);
+        res.setSuccess("Счёт создан!");
+        return res;
+    }
+
     private SpendingResponse boxSpending(Spending spending) {
         SpendingResponse spendingResponse = new SpendingResponse();
         spendingResponse.setId(spending.getId());
@@ -52,5 +62,20 @@ public class SpendingsController {
         spending.getDebts().forEach(debt -> debts.put(userRepository.findById(debt.getId().getUserId()).get().getName(), debt.getAmount()));
         spendingResponse.setDebts(debts);
         return spendingResponse;
+    }
+
+    private Spending unboxSpending(SpendingResponse spendingResponse) {
+        Spending spending = new Spending();
+        spending.setId(spendingResponse.getId());
+        spending.setDate(Date.valueOf(spendingResponse.getDate()));
+        spending.setName(spendingResponse.getName());
+        spending.setPayerId(userRepository.findByName(spendingResponse.getPayerName()).get().getId());
+        spending.setCreatorId(userRepository.findByName(spendingResponse.getCreatorName()).get().getId());
+        Set<Debt> debts = new HashSet<>();
+        for(Map.Entry<String, Integer> debt : spendingResponse.getDebts().entrySet()) {
+            debts.add(new Debt(userRepository.findByName(debt.getKey()).get().getId(), debt.getValue()));
+        }
+        spending.setDebts(debts);
+        return spending;
     }
 }
