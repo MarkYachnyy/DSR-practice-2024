@@ -7,8 +7,10 @@ ButtonConfirmNewSpending = $(".button__confirm__new__spending")[0];
 InputNewSpendingName = $(".input__new__spending__name")[0];
 InputNewSpendingDate = $(".input__new__spending__date")[0];
 TextNewSpendingCreationStatus = $(".text__spending__creation__status")[0];
+SpanMyUserId = $(".span__my__user__id")[0];
 
 var Username = null;
+var UserId = null;
 
 function loadAllSpendings() {
     SpanLoadingSpendingsMessage.style.display = "inline";
@@ -174,9 +176,10 @@ function setOverlayAddedFriendListHTML(){
     }
 }
 
-$.get("api/auth/name", null, name => {
-    $(".span__username")[0].innerText = name;
-    Username = name;
+$.getJSON("api/auth/user", null, user => {
+    $(".span__username")[0].innerText = user.name;
+    Username = user.name;
+    UserId = user.id;
     loadAllSpendings();
     $(".button__create__new__spending")[0].addEventListener("click", () => {
         $(".overlay__create__new__payment")[0].style.display = "flex";
@@ -259,4 +262,10 @@ ButtonConfirmNewSpending.addEventListener("click", () => {
         }
     });
 });
+
+SpanMyUserId.addEventListener("click", () => {
+    if(UserId != null){
+        SpanMyUserId.innerText = UserId;
+    }
+})
 
