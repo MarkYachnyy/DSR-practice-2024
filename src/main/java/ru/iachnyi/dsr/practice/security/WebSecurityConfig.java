@@ -28,6 +28,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/profile").authenticated()
                         .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/js/register.js").permitAll()
                         .requestMatchers("js/**").authenticated()
                         .requestMatchers("icon/**").authenticated()
                         .requestMatchers("css/**").authenticated())
