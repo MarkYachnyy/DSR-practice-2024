@@ -27,11 +27,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/welcome", "/login", "/register").permitAll()
                         .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/profile").authenticated()
+                        .requestMatchers("/api/register_user").permitAll()
                         .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/js/register.js").permitAll()
-                        .requestMatchers("js/**").authenticated()
-                        .requestMatchers("icon/**").authenticated()
-                        .requestMatchers("css/**").authenticated())
+                        .requestMatchers("js/**").permitAll()
+                        .requestMatchers("icon/**").permitAll()
+                        .requestMatchers("css/**").permitAll())
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/profile").permitAll()).build();

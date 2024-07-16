@@ -24,14 +24,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String username = authentication.getName();
-		System.out.println(username);
 		UserDetails fromDB = userDetailsService.loadUserByUsername(username);
 		if(!encoder.matches((String) authentication.getCredentials(), fromDB.getPassword())) {
-			System.out.println(authentication.getCredentials() + " " + fromDB.getPassword());
-			System.out.println("bad credentials");
 			throw new BadCredentialsException("das");
 		}
-		System.out.println("returning token");
 		return new UsernamePasswordAuthenticationToken(fromDB.getUsername(), fromDB.getPassword(), fromDB.getAuthorities());
 	}
 

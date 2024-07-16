@@ -1,21 +1,18 @@
 package ru.iachnyi.dsr.practice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import ru.iachnyi.dsr.practice.entity.friends.FriendRequest;
 import ru.iachnyi.dsr.practice.entity.friends.FriendRequestId;
+import ru.iachnyi.dsr.practice.entity.friends.FriendRequestStatus;
 
 import java.util.List;
 
 public interface FriendsRepository extends JpaRepository<FriendRequest, FriendRequestId> {
 
-    @Query(value = "SELECT * FROM friends WHERE receiver_id = ?1 AND status = ?2", nativeQuery = true)
-    List<FriendRequest> findAllRequestsByReceiverId(long receiverId, String status);
+    List<FriendRequest> findAllByPeople_receiverIdAndStatus(Long people_receiverId, FriendRequestStatus status);
 
-    @Query(value = "SELECT * FROM friends WHERE sender_id = ?1 AND status = ?2", nativeQuery = true)
-    List<FriendRequest> findAllRequestsBySenderId(long senderId, String status);
+    List<FriendRequest> findAllByPeople_senderIdAndStatus(Long people_senderId, FriendRequestStatus status);
 
-    @Query(value = "SELECT * FROM friends WHERE sender_id = ?1 AND receiver_id = ?2", nativeQuery = true)
-    List<FriendRequest> findAllRequestsBySenderIdAndReceiverId(long senderId, long receiverId);
+    List<FriendRequest> findAllByPeople_SenderIdAndPeople_ReceiverId(long senderId, long receiverId);
 
 }

@@ -27,23 +27,23 @@ public class FriendsService {
     private UserRepository userRepository;
 
     public List<NameAndDateFriendRelation> findAllRequestsSentByUser(Long userId) {
-        return friendsRepository.findAllRequestsBySenderId(userId, FriendRequestStatus.SENT.name())
+        return friendsRepository.findAllByPeople_senderIdAndStatus(userId, FriendRequestStatus.SENT)
                 .stream().map(req -> new NameAndDateFriendRelation(userRepository.findById(req.getPeople().getReceiverId()).get().getName(), req.getDate().toString()))
                 .collect(Collectors.toList());
     }
 
     public List<NameAndDateFriendRelation> findAllRequestsReceivedByUser(Long userId) {
-        return friendsRepository.findAllRequestsByReceiverId(userId, FriendRequestStatus.SENT.name())
+        return friendsRepository.findAllByPeople_receiverIdAndStatus(userId, FriendRequestStatus.SENT)
                 .stream().map(req -> new NameAndDateFriendRelation(userRepository.findById(req.getPeople().getSenderId()).get().getName(), req.getDate().toString()))
                 .collect(Collectors.toList());
     }
 
     public List<NameAndDateFriendRelation> findAllFriends(Long userId) {
-        Set<NameAndDateFriendRelation> received = friendsRepository.findAllRequestsByReceiverId(userId, FriendRequestStatus.ACCEPTED.name())
+        Set<NameAndDateFriendRelation> received = friendsRepository.findAllByPeople_receiverIdAndStatus(userId, FriendRequestStatus.ACCEPTED)
                 .stream().map(req -> new NameAndDateFriendRelation(userRepository.findById(req.getPeople().getSenderId()).
                         orElse(new User()).getName(), req.getDate().toString()))
                 .collect(Collectors.toSet());
-        Set<NameAndDateFriendRelation> sent = friendsRepository.findAllRequestsBySenderId(userId, FriendRequestStatus.ACCEPTED.name())
+        Set<NameAndDateFriendRelation> sent = friendsRepository.findAllByPeople_senderIdAndStatus(userId, FriendRequestStatus.ACCEPTED)
                 .stream().map(req -> new NameAndDateFriendRelation(userRepository.findById(req.getPeople().getReceiverId()).
                         orElse(new User()).getName(), req.getDate().toString()))
                 .collect(Collectors.toSet());
@@ -60,7 +60,7 @@ public class FriendsService {
     }
 
     public List<FriendRequest> findAllRequestsBySenderIdAndReceiverId(Long senderId, Long receiverId) {
-        return friendsRepository.findAllRequestsBySenderIdAndReceiverId(senderId, receiverId);
+        return friendsRepository.findAllByPeople_SenderIdAndPeople_ReceiverId(senderId, receiverId);
     }
 
     public void addFriend(Long firstId, Long secondId) {

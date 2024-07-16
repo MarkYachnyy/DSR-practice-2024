@@ -6,6 +6,7 @@ ButtonSendNewRequest = $(".button__send__friend__request")[0];
 InputNewFriendId = $(".input__add__friend__id")[0];
 
 //TODO: добавить сообщения о загрузке
+//TODO: добавить сообщения об отсутствии запросов
 function getFriendsList() {
     $.getJSON("api/friends/all", null, data => setFriendsListHTML(data));
 }
