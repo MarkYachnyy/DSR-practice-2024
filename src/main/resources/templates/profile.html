@@ -30,14 +30,17 @@
                 </div>
                 <div class="overlay__overall__amount" style="width:300px; display: flex; flex-direction: column; align-items: center;">
                     <h3>Сумма счёта</h3>
-                    <p><input class="input__overall__amount" value="0"> рублей</p>
+                    <p><input class="input__overall__amount" value="0"> ₽</p>
                     <h3>Способ разделения</h3>
                     <input type="radio" value="" id="radio-button-equal-parts">
                     <label for="radio-button-equal-parts">Равные доли</label>
                 </div>
             </div>
             <p class="text__spending__creation__status"></p>
-            <button class="button__confirm__new__spending">СОЗДАТЬ</button>
+            <div style="display: flex; flex-direction: row">
+                <button class="button__confirm__new__spending">СОЗДАТЬ</button>
+                <button class="button__close__create__new__payment__overlay">ОТМЕНА</button>
+            </div>
         </div>
     </div>
     <h1>Это ваш профиль, <span class="span__username"></span> <a href="/logout">Выйти</a></h1>

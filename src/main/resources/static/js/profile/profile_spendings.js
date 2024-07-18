@@ -38,9 +38,9 @@ function setSpendingsListHTML(spendings_list) {
                 names_list_content += names[names.length - 1];
             }
             res += `<div style="margin: 5px; padding: 10px; background: #EEEEEE">
-                        <h3>Счёт <a href="api/spendings/${spending.id}">${spending.name}</a> от ${spending.date}</h3>
+                        <h3>Счёт <a href="/spending?id=${spending.id}">${spending.name}</a> от ${spending.date}</h3>
                         <p>${names_list_content}</p>
-                        <p>Ваш долг ${spending.debts[Username]} руб</p>
+                        <p>${spending.payerName === Username ? "Вы оплатили этот счёт" : "Ваш долг " + spending.debts[Username] + " ₽"}</p>
                     </div>`
         }
         DivAllSpendings.innerHTML = res;
@@ -97,12 +97,11 @@ function setOverlayAddedFriendListHTML(){
     div_us.style.padding = "10px";
     div_us.style.background = "#EEEEEE";
 
-    let p_us_stub = document.createElement("a");
-    p_us_stub.style.width = "40px";
-    p_us_stub.style.height = "40px";
-    p_us_stub.innerText = "C";
-    p_us_stub.style.fontSize = "35px;"
-    div_us.append(p_us_stub);
+    let img_creator = document.createElement("img");
+    img_creator.style.width = "40px";
+    img_creator.style.height = "40px";
+    img_creator.src = "icon/wrench.png";
+    div_us.append(img_creator);
 
     let p_us = document.createElement("p");
     p_us.innerText = Username;
@@ -121,7 +120,7 @@ function setOverlayAddedFriendListHTML(){
         el.style.height = "40px";
     } else {
         el = document.createElement("p");
-        el.innerText = `${equalPart} руб`
+        el.innerText = `${equalPart} ₽`
     }
     div_us.append(el);
 
@@ -168,7 +167,7 @@ function setOverlayAddedFriendListHTML(){
             el.style.height = "40px";
         } else {
             el = document.createElement("p");
-            el.innerText = `${equalPart} руб`
+            el.innerText = `${equalPart} ₽`
         }
         div.append(el);
 
@@ -267,5 +266,9 @@ SpanMyUserId.addEventListener("click", () => {
     if(UserId != null){
         SpanMyUserId.innerText = UserId;
     }
+})
+
+$(".button__close__create__new__payment__overlay")[0].addEventListener("click", () => {
+    $(".overlay__create__new__payment")[0].style.display = "none";
 })
 

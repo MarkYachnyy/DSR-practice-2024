@@ -1,8 +1,10 @@
 package ru.iachnyi.dsr.practice.controllers;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.iachnyi.dsr.practice.entity.Spending;
 import ru.iachnyi.dsr.practice.entity.debt.Debt;
@@ -13,11 +15,12 @@ import ru.iachnyi.dsr.practice.security.SecurityUtils;
 import ru.iachnyi.dsr.practice.service.SpendingService;
 
 
+import java.io.IOException;
 import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RestController
+@Controller
 public class SpendingsController {
 
     private static final Logger log = LoggerFactory.getLogger(SpendingsController.class);
@@ -30,17 +33,14 @@ public class SpendingsController {
     @Autowired
     UserRepository userRepository;
 
+    @ResponseBody
     @GetMapping("/api/spendings/all")
     public List<SpendingResponse> getAllSpendings() {
         return spendingService.getAllSpendingsByUserId(securityUtils.getCurrentUserId()).
                 stream().map(this::boxSpending).collect(Collectors.toList());
     }
 
-    @GetMapping("/api/spendings/{id}")
-    public SpendingResponse getSpendingById(@PathVariable int id) {
-        return null;
-    }
-
+    @ResponseBody
     @PostMapping("/api/spendings/new")
     public SimpleSuccessOrErrorResponse createSpending(@RequestBody SpendingResponse spending) {
         SimpleSuccessOrErrorResponse res = new SimpleSuccessOrErrorResponse();
@@ -49,6 +49,23 @@ public class SpendingsController {
         spendingService.save(toSave);
         res.setSuccess("Счёт создан!");
         return res;
+    }
+
+    @GetMapping("/spending")
+    public String getSpendingPage(@RequestParam Long id) {
+        Spending spending = spendingService.getSpendingById(id);
+        if(spending == null) {
+            return "redirect:/profile";
+        } else if(!spending.getDebts().stream().map(debt -> debt.getId().getUserId()).collect(Collectors.toSet()).contains(securityUtils.getCurrentUserId())){
+            return "redirect:/profile";
+        }
+        return "spending";
+    }
+
+    @ResponseBody
+    @GetMapping("/api/spendings/{id}")
+    public SpendingResponse getSpendingById(@PathVariable Long id) {
+        return boxSpending(spendingService.getSpendingById(id));
     }
 
     private SpendingResponse boxSpending(Spending spending) {
