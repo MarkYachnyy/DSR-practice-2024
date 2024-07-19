@@ -24,7 +24,7 @@ function loadSpending(){
                 `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
                     <p>${name}</p>
                     ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
-                    ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " руб"}
+                    ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
                 </div>`
         }
         ButtonWholeAmount.innerText = `Все ${spending.debts[User.name]} ₽`;

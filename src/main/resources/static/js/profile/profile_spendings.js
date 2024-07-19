@@ -8,6 +8,7 @@ InputNewSpendingName = $(".input__new__spending__name")[0];
 InputNewSpendingDate = $(".input__new__spending__date")[0];
 TextNewSpendingCreationStatus = $(".text__spending__creation__status")[0];
 SpanMyUserId = $(".span__my__user__id")[0];
+RadioButtonEqualParts = $("#radio-button-equal-parts")[0];
 
 var Username = null;
 var UserId = null;
@@ -84,18 +85,53 @@ function setOverlayNonAddedFriendListHTML() {
     }
 }
 
+function createParticipantDiv(){
+    let div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.flexDirection = "row";
+    div.style.justifyContent = "space-between";
+    div.style.margin = "5px";
+    div.style.padding = "10px";
+    div.style.background = "#EEEEEE";
+    return div;
+}
+
+function createPersonAmountElement(name, equalPart){
+    let el;
+    if(name === PayerName){
+        el = document.createElement("img");
+        el.src = "icon/crown.png";
+        el.style.width = "40px";
+        el.style.height = "40px";
+    } else {
+        el = document.createElement("div");
+        el.style.display = "flex";
+        el.style.alignItems = "center";
+        el.innerHTML = `<input class="input__person__explicit__amount" id="input-${name}-explicit-amount" style="width: 50px;">
+        <p class="text__equal__part">${equalPart}</p>
+        <p> ₽</p>`
+    }
+    return el
+}
+
+function checkCurrentDistributionMethod(){
+    if(CurrentMethodValue === RadioButtonEqualParts.value){
+        $(".text__equal__part").show();
+        $(".input__person__explicit__amount").hide();
+        $(".div__overall__amount").show();
+    } else {
+        $(".text__equal__part").hide();
+        $(".input__person__explicit__amount").show();
+        $(".div__overall__amount").hide();
+    }
+}
+
 function setOverlayAddedFriendListHTML(){
     let equalPart = Math.floor(Number(InputOverallAmount.value) / (FriendsAddedToSpendingList.length + 1));
 
     DivOtherSpendingParticipants.innerHTML = "";
 
-    let div_us = document.createElement("div");
-    div_us.style.display = "flex";
-    div_us.style.flexDirection = "row";
-    div_us.style.justifyContent = "space-between";
-    div_us.style.margin = "5px";
-    div_us.style.padding = "10px";
-    div_us.style.background = "#EEEEEE";
+    let div_us = createParticipantDiv();
 
     let img_creator = document.createElement("img");
     img_creator.style.width = "40px";
@@ -111,18 +147,7 @@ function setOverlayAddedFriendListHTML(){
     });
 
     div_us.append(p_us);
-
-    let el;
-    if(Username === PayerName){
-        el = document.createElement("img");
-        el.src = "icon/crown.png";
-        el.style.width = "40px";
-        el.style.height = "40px";
-    } else {
-        el = document.createElement("p");
-        el.innerText = `${equalPart} ₽`
-    }
-    div_us.append(el);
+    div_us.append(createPersonAmountElement(Username, equalPart));
 
     DivOtherSpendingParticipants.append(div_us)
 
@@ -142,13 +167,7 @@ function setOverlayAddedFriendListHTML(){
         btn.style.height = "40px";
         btn.innerText = "-";
 
-        let div = document.createElement("div");
-        div.style.display = "flex";
-        div.style.flexDirection = "row";
-        div.style.justifyContent = "space-between";
-        div.style.margin = "5px";
-        div.style.padding = "10px";
-        div.style.background = "#EEEEEE";
+        let div = createParticipantDiv();
         div.append(btn);
 
         let p = document.createElement("p");
@@ -158,22 +177,22 @@ function setOverlayAddedFriendListHTML(){
             setOverlayAddedFriendListHTML();
         });
         div.append(p);
-
-        let el;
-        if(name === PayerName){
-            el = document.createElement("img");
-            el.src = "icon/crown.png";
-            el.style.width = "40px";
-            el.style.height = "40px";
-        } else {
-            el = document.createElement("p");
-            el.innerText = `${equalPart} ₽`
-        }
-        div.append(el);
+        div.append(createPersonAmountElement(name, equalPart));
 
         DivOtherSpendingParticipants.append(div);
     }
+
+    checkCurrentDistributionMethod();
 }
+
+var CurrentMethodValue = null;
+
+document.querySelectorAll(".radio__btn__distribution__method").forEach(btn => {
+    btn.addEventListener("click", () => {
+        CurrentMethodValue = btn.value;
+        checkCurrentDistributionMethod();
+    });
+});
 
 $.getJSON("api/auth/user", null, user => {
     $(".span__username")[0].innerText = user.name;
@@ -184,6 +203,8 @@ $.getJSON("api/auth/user", null, user => {
         $(".overlay__create__new__payment")[0].style.display = "flex";
     });
 });
+
+RadioButtonEqualParts.click();
 
 $.getJSON("api/friends/all", null, friends_list => {
     res = "";
@@ -217,10 +238,21 @@ ButtonConfirmNewSpending.addEventListener("click", () => {
         TextNewSpendingCreationStatus.innerText = "Добавьте в счёт хотя бы одного человека";
         return;
     }
-    if(isNaN(Number(InputOverallAmount.value)) || Number(InputOverallAmount.value) <= 0){
+    if(CurrentMethodValue === RadioButtonEqualParts.value && (isNaN(Number(InputOverallAmount.value)) || Number(InputOverallAmount.value) <= 0)){
         TextNewSpendingCreationStatus.style.color = "red";
         TextNewSpendingCreationStatus.innerText = "Введите корректное значение суммы счёта (положительное число)";
         return;
+    }
+    if(CurrentMethodValue === $("#radio-button-explicit-parts")[0].value){
+        let valid = true;
+        for(let input of [...document.querySelectorAll(".input__person__explicit__amount")]){
+            valid = valid && (!isNaN(Number(input.value)) && Number(input.value) > 0);
+        }
+        if(!valid){
+            TextNewSpendingCreationStatus.style.color = "red";
+            TextNewSpendingCreationStatus.innerText = "Некоторые значения долей людей некорректны";
+            return;
+        }
     }
     let res = {};
     res.name = InputNewSpendingName.value;
@@ -230,19 +262,36 @@ ButtonConfirmNewSpending.addEventListener("click", () => {
     res.debts = {};
     let equalPart = Math.floor(Number(InputOverallAmount.value) / (FriendsAddedToSpendingList.length + 1));
 
-    if(Username === PayerName){
-        res.debts[Username]= 0;
-    } else {
-        res.debts[Username] = equalPart;
-    }
 
-    for(let name of FriendsAddedToSpendingList){
-        if(name === PayerName){
-            res.debts[name] = 0;
+
+    if(CurrentMethodValue === RadioButtonEqualParts.value){
+        for(let name of FriendsAddedToSpendingList){
+            if(name === PayerName){
+                res.debts[name] = 0;
+            } else {
+                res.debts[name] = equalPart;
+            }
+        }
+        if(Username === PayerName){
+            res.debts[Username]= 0;
         } else {
-            res.debts[name] = equalPart;
+            res.debts[Username] = equalPart;
+        }
+    } else {
+        for(let name of FriendsAddedToSpendingList){
+            if(name === PayerName){
+                res.debts[name] = 0;
+            } else {
+                res.debts[name] = Number($(`#input-${name}-explicit-amount`)[0].value);
+            }
+        }
+        if(Username === PayerName){
+            res.debts[Username]= 0;
+        } else {
+            res.debts[Username] = Number($(`#input-${Username}-explicit-amount`)[0].value);
         }
     }
+
 
     $.ajax({
         url:'api/spendings/new',
@@ -266,9 +315,9 @@ SpanMyUserId.addEventListener("click", () => {
     if(UserId != null){
         SpanMyUserId.innerText = UserId;
     }
-})
+});
 
 $(".button__close__create__new__payment__overlay")[0].addEventListener("click", () => {
     $(".overlay__create__new__payment")[0].style.display = "none";
-})
+});
 
