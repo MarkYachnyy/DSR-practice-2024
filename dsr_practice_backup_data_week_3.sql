@@ -5,7 +5,7 @@
 -- Dumped from database version 15.4
 -- Dumped by pg_dump version 15.4
 
--- Started on 2024-07-15 12:09:48
+-- Started on 2024-07-21 22:31:40
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -25,18 +25,20 @@ SET row_security = off;
 --
 
 COPY public.debts (spending_id, user_id, amount) FROM stdin;
-4	12	500
-4	10	300
-4	9	200
-4	8	100
-19	8	375
-19	9	375
-19	12	375
-19	10	0
-20	10	625
-20	12	625
-20	8	0
-20	9	625
+32	14	400
+32	15	400
+32	16	0
+32	17	400
+32	18	400
+33	18	850
+33	17	0
+33	16	319
+34	15	2222
+34	14	1111
+34	16	0
+35	14	1000
+35	16	1000
+35	15	0
 \.
 
 
@@ -47,12 +49,27 @@ COPY public.debts (spending_id, user_id, amount) FROM stdin;
 --
 
 COPY public.friends (receiver_id, sender_id, date, status) FROM stdin;
-10	8	2024-07-11	ACCEPTED
-10	9	2024-07-11	ACCEPTED
-9	8	2024-07-11	ACCEPTED
-12	8	2024-07-11	ACCEPTED
+17	14	2024-07-21	SENT
+18	14	2024-07-21	SENT
+15	14	2024-07-21	ACCEPTED
+16	14	2024-07-21	ACCEPTED
+16	18	2024-07-21	ACCEPTED
+15	16	2024-07-21	ACCEPTED
+17	18	2024-07-21	ACCEPTED
+17	16	2024-07-21	ACCEPTED
 \.
 
+
+--
+-- TOC entry 3352 (class 0 OID 16535)
+-- Dependencies: 214
+-- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.roles (id, name) FROM stdin;
+1	ROLE_USER
+2	ROLE_ADMIN
+\.
 
 
 --
@@ -62,9 +79,10 @@ COPY public.friends (receiver_id, sender_id, date, status) FROM stdin;
 --
 
 COPY public.spendings (id, creator_id, date, name, payer_id) FROM stdin;
-4	8	2024-07-12	Поход Марков	8
-19	8	2024-07-14	Поход Марков Сиквел	10
-20	8	2024-07-14	Поход Марков Я Платил	8
+32	16	2024-07-21	Общий сбор	16
+33	16	2024-07-13	Вторая компания	17
+34	14	2024-07-12	Первая компания	16
+35	15	2024-07-15	Компания 1 делит поровну	15
 \.
 
 
@@ -75,10 +93,11 @@ COPY public.spendings (id, creator_id, date, name, payer_id) FROM stdin;
 --
 
 COPY public.users (id, name, password) FROM stdin;
-8	mark2	$2a$10$A0xRrBQuDe4DJhzgeJUKseYg7vSLP1wwvdz4kAuxESW0TLlwePXeW
-9	mark3	$2a$10$0jXYTQH/PMB/Ep2MBLYBG.9hHwz6VuM.My3Cp9PbAmC7o1HH2j5Ui
-10	mark4	$2a$10$f2Zso70jjDeW6Eac2PDjMeAmaRNTF2OJmhBKFkR74qUPPMxqA5asC
-12	mark5	$2a$10$r07/AhZ3AwAgwgpgzYnT3./cooHXfUbBx6pEmQ/We8FXwEgUxi2Zu
+14	user1	$2a$10$uHbGfb1P95mS0eauYYCOFuUOHZgJn6vOzl6qzx.kvwlcAnR8IehV6
+15	user2	$2a$10$YWZ2mABZIokN8KnG5h3ike3k4bUoAlDga2wv1O3N1jWnYa50GF2si
+16	user3	$2a$10$MOO1eBnb.XVIaOtyqU/qv.u1jVz9Cm6dxl7Byuuz4RyG6u.1oXc5y
+17	user4	$2a$10$JwZRFZ0TB5JXB26SEoT0xOQpfMleS3APC9XtSNaHiDapBsV5qa4.K
+18	user5	$2a$10$HWi06Z4aTYKM2GkO/eTksOgM1l2LFu1JbsAOaA0KxXGSpxNV2VLsK
 \.
 
 
@@ -89,10 +108,11 @@ COPY public.users (id, name, password) FROM stdin;
 --
 
 COPY public.users_roles (user_id, roles_id) FROM stdin;
-8	1
-9	1
-10	1
-12	1
+14	1
+15	1
+16	1
+17	1
+18	1
 \.
 
 
@@ -102,7 +122,7 @@ COPY public.users_roles (user_id, roles_id) FROM stdin;
 -- Name: spendings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.spendings_id_seq', 20, true);
+SELECT pg_catalog.setval('public.spendings_id_seq', 35, true);
 
 
 --
@@ -111,10 +131,10 @@ SELECT pg_catalog.setval('public.spendings_id_seq', 20, true);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 12, true);
+SELECT pg_catalog.setval('public.users_id_seq', 18, true);
 
 
--- Completed on 2024-07-15 12:09:48
+-- Completed on 2024-07-21 22:31:41
 
 --
 -- PostgreSQL database dump complete
