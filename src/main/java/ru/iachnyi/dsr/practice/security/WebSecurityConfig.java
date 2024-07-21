@@ -20,7 +20,6 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //TODO:Пофиксить доступ к скриптам
         return http.anonymous(AbstractHttpConfigurer::disable).
                 httpBasic(Customizer.withDefaults()).
                 authorizeHttpRequests(auth -> auth

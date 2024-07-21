@@ -5,8 +5,6 @@ TextNewFriendRequestStatus = $(".text__new__request__status")[0];
 ButtonSendNewRequest = $(".button__send__friend__request")[0];
 InputNewFriendId = $(".input__add__friend__id")[0];
 
-//TODO: добавить сообщения о загрузке
-//TODO: добавить сообщения об отсутствии запросов
 function getFriendsList() {
     $.getJSON("api/friends/all", null, data => setFriendsListHTML(data));
 }
@@ -20,31 +18,34 @@ function getSentRequsts() {
 }
 
 function setFriendsListHTML(friends_list) {
-    let res = "";
-    for (let friend of friends_list) {
-        res += `<p style="margin: 5px; padding: 10px; background: #EEEEEE">${friend.name} | <span style="color:green">в друзьях с ${friend.date}</span></p>`;
+    if(friends_list.length > 0){
+        DivFriends.innerHTML = "";
+    } else {
+        DivFriends.innerHTML = "<p style='color: gray'>Пользователи в друзьях отсутвствуют</p>";
     }
-    DivFriends.innerHTML = res;
+    for (let friend of friends_list) {
+        DivFriends.innerHTML += `<p style="margin: 5px; padding: 10px; background: #EEEEEE">${friend.name} | <span style="color:green">в друзьях с ${friend.date}</span></p>`;
+    }
 }
 
 function setIncomingRequestsListHTML(request_list) {
-    let res = "";
     if (request_list.length > 0) {
         DivIncomingRequests.innerHTML = "";
+    } else {
+        DivIncomingRequests.innerHTML = "<p style='color: gray'>Входящих запросов нет</p>";
     }
     for (let i = 0; i < request_list.length; i++) {
         request = request_list[i];
-        res += `<div style="display: flex; flex-direction: row; margin: 5px; padding: 10px; background: #EEEEEE">
+        DivIncomingRequests.innerHTML += `<div style="display: flex; flex-direction: row; margin: 5px; padding: 10px; background: #EEEEEE">
             <p>${request.name} | <span style="color:purple">хочет добавить вас в друзья с ${request.date}</span></p>
             <button id = "accept__friend__request__btn__${i}">Принять</button>
         </div>`;
     }
-    DivIncomingRequests.innerHTML = res;
 
     for (let i = 0; i < request_list.length; i++) {
         let button = $(`#accept__friend__request__btn__${i}`)[0];
         button.addEventListener("click", () => {
-            $.post(`/api/friends/add-friend/${request_list[i].name}`, null, () => {
+            $.post(`/api/friends/add-friend/${request_list[i].name}`, null, response => {
                 getFriendsList();
                 getIncomingRequsts();
             });
@@ -53,14 +54,14 @@ function setIncomingRequestsListHTML(request_list) {
 }
 
 function setSentRequestsListHTML(request_list) {
-    let res = "";
     if (request_list.length > 0) {
         DivSentRequests.innerHTML = "";
+    } else {
+        DivSentRequests.innerHTML = "<p style='color: gray'>Исходящих запросов нет</p>";
     }
     for (let request of request_list) {
-        res += `<p style="margin: 5px; padding: 10px; background: #EEEEEE">${request.name} | <span style="color:gray">запрос ожидает ответа с ${request.date}</span></p>`;
+        DivSentRequests.innerHTML += `<p style="margin: 5px; padding: 10px; background: #EEEEEE">${request.name} | <span style="color:gray">запрос ожидает ответа с ${request.date}</span></p>`;
     }
-    DivSentRequests.innerHTML = res;
 }
 
 function sendFriendRequest() {
@@ -72,14 +73,14 @@ function sendFriendRequest() {
         TextNewFriendRequestStatus.style.color = "gray";
         TextNewFriendRequestStatus.innerText = "Обрабатываем запрос";
         $.post(`api/friends/send-request/${user_id}`, null, response => {
-            processServerResponse(response);
+            processNewFriendServerResponse(response);
             getSentRequsts();
         });
     }
 
 }
 
-function processServerResponse(response) {
+function processNewFriendServerResponse(response) {
     if (response.success == null) {
         TextNewFriendRequestStatus.innerText = response.error;
         TextNewFriendRequestStatus.style.color = "red";

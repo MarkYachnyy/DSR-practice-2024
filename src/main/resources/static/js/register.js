@@ -7,13 +7,13 @@ let ValuesAreValid = true;
 
 ButtonConfirm.addEventListener('click', () => {
     $('.text__server__respose').show();
-    TextServerResponse.innerText = "Обрабатываем ваш запрос...";
-    TextServerResponse.style.color = "gray";
     validateValues();
     if(ValuesAreValid){
+        TextServerResponse.innerText = "Обрабатываем ваш запрос...";
+        TextServerResponse.style.color = "gray";
        setRegisterAjax();
     } else {
-        //TODO:Сделать нормальный обработчик
+        TextServerResponse.style.color = "red";
         console.log("values are invalid");
     }
 });
@@ -31,12 +31,15 @@ function setRegisterAjax(){
 function validateValues() {
     ValuesAreValid = true;
     if(InputLogin.value.length < 5 || InputLogin.value.length > 20){
+        TextServerResponse.innerText = "Длина пароля должна быть от 5 до 20 символов";
         ValuesAreValid = false;
     }
     if(InputPassword.value.length < 8 || InputLogin.value.length > 16){
+        TextServerResponse.innerText = "Имя пользователя должно быть от 8 до 16 символов";
         ValuesAreValid = false;
     }
     if(InputPassword.value !== InputPasswordConfirm.value){
+        TextServerResponse.innerText = "Пароли не совпадают";
         ValuesAreValid = false;
     }
 }

@@ -12,8 +12,8 @@ User = null;
 
 function loadSpending(){
     $.getJSON(`/api/spendings/${SpendingId}` , null, spending => {
-        if(User.name === spending.creatorName){
-            $(".button__delete__spending").show();
+        if(spending.debts[User.name] === 0){
+            $(".button__open__debt__payment__overlay").hide();
         }
         SpanSpendingName.innerText = spending.name;
         SpanSpendingDate.innerText = spending.date;
@@ -45,17 +45,6 @@ function loadSpending(){
         })
     });
 }
-
-$(".button__delete__spending").hide();
-
-$(".button__delete__spending")[0].addEventListener("click", () => {
-    $.ajax({
-        url: `api/spendings/${SpendingId}`,
-        method: "delete",
-        contentType : "application/json",
-        success: () => {}
-    })
-});
 
 $.getJSON("api/auth/user", null, user => {
     User = user;

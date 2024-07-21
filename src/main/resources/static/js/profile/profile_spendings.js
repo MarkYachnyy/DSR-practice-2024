@@ -9,6 +9,8 @@ InputNewSpendingDate = $(".input__new__spending__date")[0];
 TextNewSpendingCreationStatus = $(".text__spending__creation__status")[0];
 SpanMyUserId = $(".span__my__user__id")[0];
 RadioButtonEqualParts = $("#radio-button-equal-parts")[0];
+DivAllDebts = $(".div__all__debts")[0];
+SpanTotalDebtAmount = $(".span__total__debt__amount")[0];
 
 var Username = null;
 var UserId = null;
@@ -48,6 +50,7 @@ function setSpendingsListHTML(spendings_list) {
     } else {
         DivAllSpendings.innerHTML = "<span style='color: gray;'>Вы не состоите ни в одном счёте</span>"
     }
+    setDebtListHTML(getDebtMap(spendings_list));
 }
 
 var FriendsNotAddedToSpendingList = [];
@@ -139,8 +142,9 @@ function setOverlayAddedFriendListHTML(){
     img_creator.src = "icon/wrench.png";
     div_us.append(img_creator);
 
-    let p_us = document.createElement("p");
+    let p_us = document.createElement("button");
     p_us.innerText = Username;
+    p_us.style.height = "40px";
     p_us.addEventListener("click", () => {
         PayerName = Username;
         setOverlayAddedFriendListHTML();
@@ -170,8 +174,9 @@ function setOverlayAddedFriendListHTML(){
         let div = createParticipantDiv();
         div.append(btn);
 
-        let p = document.createElement("p");
+        let p = document.createElement("button");
         p.innerText = name;
+        p.style.height = "40px";
         p.addEventListener("click", () => {
             PayerName = name;
             setOverlayAddedFriendListHTML();
@@ -321,3 +326,56 @@ $(".button__close__create__new__payment__overlay")[0].addEventListener("click", 
     $(".overlay__create__new__payment")[0].style.display = "none";
 });
 
+function getDebtMap(spending_list){
+    let res = {}
+    for(let spending of spending_list){
+        if(res[spending.payerName] === undefined && spending.debts[Username] > 0){
+            res[spending.payerName] = {}
+        }
+        if(spending.debts[Username] > 0){
+            res[spending.payerName][spending.id] = {name: spending.name, amount: spending.debts[Username]};
+        }
+    }
+    console.log(res)
+    return res;
+}
+
+function setDebtListHTML(debtMap){
+    let totalAmount = 0;
+    DivAllDebts.innerHTML = Object.keys(debtMap).length > 0 ? "" : "<p style='color: gray'>Долгов перед пользователями нет</p>";
+    for(let personName of Object.keys(debtMap)){
+        let personAmount = 0;
+        let personDiv = document.createElement("div");
+        personDiv.style.background = "#EEEEEE";
+        personDiv.style.margin = "5px";
+        personDiv.style.padding = "10px";
+        let personDivHeader = document.createElement("h3");
+        let expandSpendingsList = document.createElement("button");
+        expandSpendingsList.style.color = "blue";
+        expandSpendingsList.innerText = "▶Счета";
+        let spendingListDiv = document.createElement("div");
+        spendingListDiv.style.display = "none";
+        for(let spendingId of Object.keys(debtMap[personName])){
+            let amount = debtMap[personName][spendingId]['amount'];
+            let spendingName = debtMap[personName][spendingId]['name'];
+            spendingListDiv.innerHTML += `<p>Счёт <a href="/spending?id=${spendingId}">${spendingName}</a>: долг ${amount}₽</p>`;
+            totalAmount += amount;
+            personAmount += amount;
+        }
+        expandSpendingsList.addEventListener('click', () => {
+            if(spendingListDiv.style.display === 'none'){
+                spendingListDiv.style.display = 'block';
+                expandSpendingsList.innerText = "▼Счета";
+            } else {
+                spendingListDiv.style.display = 'none';
+                expandSpendingsList.innerText = "▶Счета";
+            }
+        });
+        personDivHeader.innerText = `Долг перед ${personName}: ${personAmount}₽`
+        personDiv.append(personDivHeader);
+        personDiv.append(expandSpendingsList);
+        personDiv.append(spendingListDiv);
+        DivAllDebts.append(personDiv);
+        SpanTotalDebtAmount.innerText = totalAmount;
+    }
+}
