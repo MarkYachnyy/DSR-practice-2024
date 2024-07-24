@@ -11,20 +11,65 @@ SpanMyUserId = $(".span__my__user__id")[0];
 RadioButtonEqualParts = $("#radio-button-equal-parts")[0];
 DivAllDebts = $(".div__all__debts")[0];
 SpanTotalDebtAmount = $(".span__total__debt__amount")[0];
+CheckBoxHideZeroDebtSpendings = $("#input-check-hide-zero-debt-spendings")[0];
 
 var Username = null;
 var UserId = null;
+var SpendingList = null;
+
+var CurrentComparator = null;
+var ComparatorMap = new Map();
+ComparatorMap.set($("#input-sort-criteria-debt-ascend")[0].value, debtComparator);
+ComparatorMap.set($("#input-sort-criteria-debt-descend")[0].value, (s1, s2) => -debtComparator(s1, s2));
+ComparatorMap.set($("#input-sort-criteria-date-descend")[0].value, dateComparator);
+ComparatorMap.set($("#input-sort-criteria-date-ascend")[0].value, (s1, s2) => -dateComparator(s1, s2));
+document.querySelectorAll(".input__radio__sort__criteria").forEach(input => {
+    input.addEventListener("click", () => {
+        CurrentComparator = ComparatorMap.get(input.value);
+        if(SpendingList != null){
+            SpendingList.sort(CurrentComparator);
+            setSpendingsListHTML(SpendingList);
+        }
+    });
+});
+$("#input-sort-criteria-date-descend")[0].click();
+
+CheckBoxHideZeroDebtSpendings.addEventListener("click", () => setSpendingsListHTML(SpendingList));
+
+
+function dateComparator(spending1, spending2){
+    if(spending1.date < spending2.date){
+        return -1;
+    } else if (spending1.date > spending2.date){
+        return 1;
+    }
+    return 0;
+}
+
+function debtComparator(spending1, spending2){
+    if(spending1.debts[Username] < spending2.debts[Username]){
+        return -1;
+    } else if (spending1.debts[Username] > spending2.debts[Username]){
+        return 1;
+    }
+    return 0;
+}
 
 function loadAllSpendings() {
     SpanLoadingSpendingsMessage.style.display = "inline";
-    $.getJSON("api/spendings/all", null, setSpendingsListHTML)
+    $.getJSON("api/spendings/all", null, spendingList => {
+        SpendingList = spendingList;
+        $("#input-sort-criteria-date-descend")[0].click();
+    });
 }
 
 function setSpendingsListHTML(spendings_list) {
+    spendings_list.sort()
     SpanLoadingSpendingsMessage.style.display = "none";
     if (spendings_list.length > 0) {
         let res = "";
         for (let spending of spendings_list) {
+            if(CheckBoxHideZeroDebtSpendings.checked && spending.debts[Username] === 0) continue;
             let names = []
             for (let name in spending.debts) {
                 names.push(name);
@@ -322,6 +367,8 @@ SpanMyUserId.addEventListener("click", () => {
     }
 });
 
+InputNewSpendingDate.value = new Date().toISOString().substring(0,10);
+
 $(".button__close__create__new__payment__overlay")[0].addEventListener("click", () => {
     $(".overlay__create__new__payment")[0].style.display = "none";
 });
@@ -336,7 +383,6 @@ function getDebtMap(spending_list){
             res[spending.payerName][spending.id] = {name: spending.name, amount: spending.debts[Username]};
         }
     }
-    console.log(res)
     return res;
 }
 

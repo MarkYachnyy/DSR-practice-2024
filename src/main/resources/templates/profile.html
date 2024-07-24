@@ -83,6 +83,25 @@
         <div class="div__spendings" style="padding: 20px">
             <h2>Счета</h2>
             <button class="button__create__new__spending">Создать новый счёт</button>
+            <h3 style="margin: 5px;">Сортировать по:</h3>
+            <div style="display: flex">
+                <input class="input__radio__sort__criteria" type="radio" name="sort-criteria" value="date_descend" id="input-sort-criteria-date-descend">
+                <label for="input-sort-criteria-date-descend">Дате (старые)</label>
+
+                <input class="input__radio__sort__criteria" type="radio" name="sort-criteria" value="date_ascend" id="input-sort-criteria-date-ascend">
+                <label for="input-sort-criteria-date-ascend">Дате (новые)</label>
+            </div>
+            <div style="display: flex">
+                <input class="input__radio__sort__criteria" type="radio" name="sort-criteria" value="debt_descend" id="input-sort-criteria-debt-descend">
+                <label for="input-sort-criteria-debt-descend">Долгу (больше)</label>
+
+                <input class="input__radio__sort__criteria" type="radio" name="sort-criteria" value="debt_ascend" id="input-sort-criteria-debt-ascend">
+                <label for="input-sort-criteria-debt-ascend">Долгу (меньше)</label>
+            </div>
+            <div style="display: flex">
+                <input type="checkbox" id="input-check-hide-zero-debt-spendings">
+                <label for="input-check-hide-zero-debt-spendings">Скрыть счета с нулевым долгом</label>
+            </div>
             <span class="span__spendings__loading__message" style="color: gray">Загружаем счета...</span>
             <div class="div__all__spendings">
 
