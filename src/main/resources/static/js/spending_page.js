@@ -46,7 +46,7 @@ function loadSpending(){
     });
 }
 
-$.getJSON("api/auth/user", null, user => {
+$.getJSON("api/user/current", null, user => {
     User = user;
     loadSpending();
 });

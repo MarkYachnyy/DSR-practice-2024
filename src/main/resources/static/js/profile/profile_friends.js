@@ -48,6 +48,7 @@ function setIncomingRequestsListHTML(request_list) {
             $.post(`/api/friends/add-friend/${request_list[i].name}`, null, response => {
                 getFriendsList();
                 getIncomingRequsts();
+                getSentRequsts();
             });
         });
     }
@@ -74,6 +75,8 @@ function sendFriendRequest() {
         TextNewFriendRequestStatus.innerText = "Обрабатываем запрос";
         $.post(`api/friends/send-request/${user_id}`, null, response => {
             processNewFriendServerResponse(response);
+            getFriendsList();
+            getIncomingRequsts();
             getSentRequsts();
         });
     }

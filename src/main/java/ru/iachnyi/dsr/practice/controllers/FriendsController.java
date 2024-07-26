@@ -4,10 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.iachnyi.dsr.practice.entity.User;
 import ru.iachnyi.dsr.practice.entity.friends.FriendRequest;
 import ru.iachnyi.dsr.practice.entity.friends.FriendRequestStatus;
@@ -65,7 +62,12 @@ public class FriendsController {
                 List<FriendRequest> requestsReceived = friendsService.findAllRequestsBySenderIdAndReceiverId(userId, currId);
                 if (!requestsReceived.isEmpty()) {
                     FriendRequest request = requestsReceived.getFirst();
-                    res.setError(request.getStatus() == FriendRequestStatus.ACCEPTED ? "Данный пользватель уже у вас в друзьях" : "У вас уже есть входящий запрос от данного пользователя, примите его");
+                    if(request.getStatus() == FriendRequestStatus.SENT) {
+                        friendsService.addFriend(userId, currId);
+                        res.setSuccess("Пользователь добавлен в друзья");
+                    } else {
+                        res.setError("Данный пользватель уже у вас в друзьях");
+                    }
                 } else {
                     friendsService.sendFriendRequest(currId, userId);
                     res.setSuccess("Запрос успешно отправлен");

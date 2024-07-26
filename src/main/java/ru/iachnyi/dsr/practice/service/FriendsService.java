@@ -64,13 +64,13 @@ public class FriendsService {
     }
 
     public void addFriend(Long firstId, Long secondId) {
-        List<FriendRequest> list1 = findAllRequestsBySenderIdAndReceiverId(firstId, secondId);
-        list1.addAll(findAllRequestsBySenderIdAndReceiverId(secondId, firstId));
+        List<FriendRequest> list = findAllRequestsBySenderIdAndReceiverId(firstId, secondId);
+        list.addAll(findAllRequestsBySenderIdAndReceiverId(secondId, firstId));
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
         friendRequest.setDate(Date.valueOf(LocalDate.now()));
-        if(!list1.isEmpty()) {
-            friendRequest.setPeople(new FriendRequestId(list1.getFirst().getPeople().getSenderId(), list1.getFirst().getPeople().getReceiverId()));
+        if(!list.isEmpty()) {
+            friendRequest.setPeople(new FriendRequestId(list.getFirst().getPeople().getSenderId(), list.getFirst().getPeople().getReceiverId()));
         } else {
             friendRequest.setPeople(new FriendRequestId(firstId, secondId));
         }
