@@ -3,7 +3,7 @@ DivIncomingRequests = $(".div__incoming__requests")[0];
 DivSentRequests = $(".div__sent__requests")[0];
 TextNewFriendRequestStatus = $(".text__new__request__status")[0];
 ButtonSendNewRequest = $(".button__send__friend__request")[0];
-InputNewFriendId = $(".input__add__friend__id")[0];
+InputNewFriendName = $(".input__add__friend__name")[0];
 
 function getFriendsList() {
     $.getJSON("api/friends/all", null, data => setFriendsListHTML(data));
@@ -65,10 +65,10 @@ function setSentRequestsListHTML(request_list) {
 }
 
 function sendFriendRequest() {
-    user_id = Number(InputNewFriendId.value);
-    if (isNaN(user_id) || user_id % 1 !== 0 || user_id <= 0) {
+    user_id = InputNewFriendName.value;
+    if (user_id.trim() === "") {
         TextNewFriendRequestStatus.style.color = "red";
-        TextNewFriendRequestStatus.innerText = "Id должен быть целым положительным числом";
+        TextNewFriendRequestStatus.innerText = "Поле не должно быть пустым";
     } else {
         TextNewFriendRequestStatus.style.color = "gray";
         TextNewFriendRequestStatus.innerText = "Обрабатываем запрос";
@@ -87,7 +87,7 @@ function processNewFriendServerResponse(response) {
     } else {
         TextNewFriendRequestStatus.innerText = response.success;
         TextNewFriendRequestStatus.style.color = "green";
-        InputNewFriendId.value = "";
+        InputNewFriendName.value = "";
     }
 }
 

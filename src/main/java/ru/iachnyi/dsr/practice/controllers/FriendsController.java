@@ -46,27 +46,28 @@ public class FriendsController {
         return friendsService.findAllRequestsSentByUser(securityUtils.getCurrentUserId());
     }
 
-    @PostMapping("/api/friends/send-request/{id}")
-    public SimpleSuccessOrErrorResponse sendRequest(@PathVariable long id) {
+    @PostMapping("/api/friends/send-request/{name}")
+    public SimpleSuccessOrErrorResponse sendRequest(@PathVariable String name) {
         SimpleSuccessOrErrorResponse res = new SimpleSuccessOrErrorResponse();
-        User user = userRepository.findById(id).orElse(null);
+        User user = userRepository.findByName(name).orElse(null);
         if (user == null) {
-            res.setError("Пользователя с таким id не существует");
-        } else if (securityUtils.getCurrentUserId() == id) {
-            res.setError("Это ваш id!");
+            res.setError("Пользователя с таким ником не существует");
+        } else if (securityUtils.getCurrentUserName().equals(name)) {
+            res.setError("Это ваш ник!");
         } else {
             long currId = securityUtils.getCurrentUserId();
-            List<FriendRequest> requestsSent = friendsService.findAllRequestsBySenderIdAndReceiverId(currId, id);
+            long userId = user.getId();
+            List<FriendRequest> requestsSent = friendsService.findAllRequestsBySenderIdAndReceiverId(currId, userId);
             if (!requestsSent.isEmpty()) {
                 FriendRequest request = requestsSent.getFirst();
                 res.setError(request.getStatus() == FriendRequestStatus.ACCEPTED ? "Данный пользватель уже у вас в друзьях" : "Вы уже отправили запрос данному пользователю");
             } else {
-                List<FriendRequest> requestsReceived = friendsService.findAllRequestsBySenderIdAndReceiverId(id, currId);
+                List<FriendRequest> requestsReceived = friendsService.findAllRequestsBySenderIdAndReceiverId(userId, currId);
                 if (!requestsReceived.isEmpty()) {
                     FriendRequest request = requestsReceived.getFirst();
                     res.setError(request.getStatus() == FriendRequestStatus.ACCEPTED ? "Данный пользватель уже у вас в друзьях" : "У вас уже есть входящий запрос от данного пользователя, примите его");
                 } else {
-                    friendsService.sendFriendRequest(currId, id);
+                    friendsService.sendFriendRequest(currId, userId);
                     res.setSuccess("Запрос успешно отправлен");
                 }
             }
