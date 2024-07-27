@@ -20,12 +20,32 @@ function loadSpending(){
         SpanSpendingCreatorName.innerText = spending.creatorName;
         SpanSpendingPayerName.innerText = spending.payerName;
         for(let name in spending.debts){
-            DivSpendingParticipants.innerHTML +=
-                `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
+            if(name === spending.creatorName){
+                DivSpendingParticipants.innerHTML +=
+                    `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
                     <p>${name}</p>
                     ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
                     ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
                 </div>`
+            } else {
+                $.get({
+                    url:"api/friends/are-friends",
+                    data: {
+                        name1: spending.creatorName,
+                        name2: name
+                    },
+                    success: response => {
+                        if(Boolean(response)){
+                            DivSpendingParticipants.innerHTML +=
+                                `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
+                    <p>${name}</p>
+                    ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
+                    ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
+                </div>`
+                        }
+                    }
+                })
+            }
         }
         ButtonWholeAmount.innerText = `Все ${spending.debts[User.name]} ₽`;
         ButtonWholeAmount.addEventListener("click", () => {

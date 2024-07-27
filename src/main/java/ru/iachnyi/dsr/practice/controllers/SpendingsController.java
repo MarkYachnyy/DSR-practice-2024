@@ -20,7 +20,7 @@ import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 public class SpendingsController {
 
     private static final Logger log = LoggerFactory.getLogger(SpendingsController.class);
@@ -33,14 +33,12 @@ public class SpendingsController {
     @Autowired
     UserRepository userRepository;
 
-    @ResponseBody
     @GetMapping("/api/spendings/all")
     public List<SpendingResponse> getAllSpendings() {
         return spendingService.getAllSpendingsByUserId(securityUtils.getCurrentUserId()).
                 stream().map(this::boxSpending).collect(Collectors.toList());
     }
 
-    @ResponseBody
     @PostMapping("/api/spendings/new")
     public SimpleSuccessOrErrorResponse createSpending(@RequestBody SpendingResponse spending) {
         SimpleSuccessOrErrorResponse res = new SimpleSuccessOrErrorResponse();
@@ -51,18 +49,6 @@ public class SpendingsController {
         return res;
     }
 
-    @GetMapping("/spending")
-    public String getSpendingPage(@RequestParam Long id) {
-        Spending spending = spendingService.getSpendingById(id);
-        if(spending == null) {
-            return "redirect:/profile";
-        } else if(!spending.getDebts().stream().map(debt -> debt.getId().getUserId()).collect(Collectors.toSet()).contains(securityUtils.getCurrentUserId())){
-            return "redirect:/profile";
-        }
-        return "spending";
-    }
-
-    @ResponseBody
     @GetMapping("/api/spendings/{id}")
     public SpendingResponse getSpendingById(@PathVariable Long id) {
         return boxSpending(spendingService.getSpendingById(id));

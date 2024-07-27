@@ -78,6 +78,12 @@ public class FriendsController {
         return res;
     }
 
+    @GetMapping("/api/friends/are-friends")
+    public boolean areFriends(@RequestParam String name1, @RequestParam String name2){
+        long id1 = userRepository.findByName(name1).orElse(new User()).getId();
+        return friendsService.findAllFriends(id1).stream().anyMatch(f -> f.getName().equals(name2));
+    }
+
     @PostMapping("/api/friends/add-friend/{name}")
     public void addFriend(@PathVariable String name) {
         Long firstId = securityUtils.getCurrentUserId();
