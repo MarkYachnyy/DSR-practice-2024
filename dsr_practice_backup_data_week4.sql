@@ -5,7 +5,7 @@
 -- Dumped from database version 15.4
 -- Dumped by pg_dump version 15.4
 
--- Started on 2024-07-21 22:31:40
+-- Started on 2024-07-29 12:30:39
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -25,20 +25,9 @@ SET row_security = off;
 --
 
 COPY public.debts (spending_id, user_id, amount) FROM stdin;
-32	14	400
-32	15	400
-32	16	0
-32	17	400
-32	18	400
-33	18	850
-33	17	0
-33	16	319
-34	15	2222
-34	14	1111
-34	16	0
-35	14	1000
-35	16	1000
-35	15	0
+40	14	0
+40	16	333
+40	15	111
 \.
 
 
@@ -49,14 +38,8 @@ COPY public.debts (spending_id, user_id, amount) FROM stdin;
 --
 
 COPY public.friends (receiver_id, sender_id, date, status) FROM stdin;
-17	14	2024-07-21	SENT
-18	14	2024-07-21	SENT
-15	14	2024-07-21	ACCEPTED
-16	14	2024-07-21	ACCEPTED
-16	18	2024-07-21	ACCEPTED
-15	16	2024-07-21	ACCEPTED
-17	18	2024-07-21	ACCEPTED
-17	16	2024-07-21	ACCEPTED
+16	14	2024-07-29	SENT
+15	14	2024-07-29	ACCEPTED
 \.
 
 
@@ -79,10 +62,7 @@ COPY public.roles (id, name) FROM stdin;
 --
 
 COPY public.spendings (id, creator_id, date, name, payer_id) FROM stdin;
-32	16	2024-07-21	Общий сбор	16
-33	16	2024-07-13	Вторая компания	17
-34	14	2024-07-12	Первая компания	16
-35	15	2024-07-15	Компания 1 делит поровну	15
+40	14	2024-07-29	Счёт1	14
 \.
 
 
@@ -122,7 +102,7 @@ COPY public.users_roles (user_id, roles_id) FROM stdin;
 -- Name: spendings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.spendings_id_seq', 35, true);
+SELECT pg_catalog.setval('public.spendings_id_seq', 40, true);
 
 
 --
@@ -131,10 +111,10 @@ SELECT pg_catalog.setval('public.spendings_id_seq', 35, true);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 18, true);
+SELECT pg_catalog.setval('public.users_id_seq', 20, true);
 
 
--- Completed on 2024-07-21 22:31:41
+-- Completed on 2024-07-29 12:30:39
 
 --
 -- PostgreSQL database dump complete
