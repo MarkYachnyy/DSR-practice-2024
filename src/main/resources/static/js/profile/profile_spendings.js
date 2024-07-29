@@ -4,9 +4,16 @@ DivAllDebts = $(".div__all__debts")[0];
 SpanTotalDebtAmount = $(".span__total__debt__amount")[0];
 CheckBoxHideZeroDebtSpendings = $("#input-check-hide-zero-debt-spendings")[0];
 
-var Username = null;
-var UserId = null;
+Username = null;
+UserId = null;
 var SpendingList = null;
+
+$.getJSON("api/user/current", null, user => {
+    $(".span__username")[0].innerText = user.name;
+    Username = user.name;
+    UserId = user.id;
+    loadAllSpendings();
+});
 
 var CurrentComparator = null;
 var ComparatorMap = new Map();

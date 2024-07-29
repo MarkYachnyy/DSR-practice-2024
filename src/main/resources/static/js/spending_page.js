@@ -10,38 +10,51 @@ InputPaymentAmount = $(".input__debt__payment__amount")[0];
 TextPayDebtStatus = $(".debt__payment__status")[0];
 User = null;
 
-function loadSpending(){
-    $.getJSON(`/api/spendings/${SpendingId}` , null, spending => {
-        if(spending.debts[User.name] === 0){
+function loadSpending() {
+    $.getJSON(`/api/spendings/${SpendingId}`, null, spending => {
+        if (spending.debts[User.name] === 0) {
             $(".button__open__debt__payment__overlay").hide();
         }
         SpanSpendingName.innerText = spending.name;
         SpanSpendingDate.innerText = spending.date;
         SpanSpendingCreatorName.innerText = spending.creatorName;
         SpanSpendingPayerName.innerText = spending.payerName;
-        for(let name in spending.debts){
-            if(name === spending.creatorName){
+        for (let name in spending.debts) {
+            if (name === spending.creatorName) {
                 DivSpendingParticipants.innerHTML +=
                     `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
-                    <p>${name}</p>
-                    ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
-                    ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
-                </div>`
+                        <p>${name}</p>
+                        ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
+                        ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
+                    </div>`
             } else {
                 $.get({
-                    url:"api/friends/are-friends",
+                    url: "api/friends/are-friends",
                     data: {
                         name1: spending.creatorName,
                         name2: name
                     },
                     success: response => {
-                        if(Boolean(response)){
+                        if (Boolean(response)) {
                             DivSpendingParticipants.innerHTML +=
                                 `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
-                    <p>${name}</p>
-                    ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
-                    ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
-                </div>`
+                                    <p>${name}</p>
+                                    ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
+                                    ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
+                                </div>`
+                        } else if(User.name === spending.creatorName){
+                            DivSpendingParticipants.innerHTML +=
+                                `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
+                                    <p style="color: gray">${name}</p>
+                                    <p style="color: gray">Пользователь ещё не принял запрос</p>
+                                </div>`
+                        } else if(User.name === name){
+                            $(".button__open__debt__payment__overlay").hide();
+                            DivSpendingParticipants.innerHTML +=
+                                `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
+                                    <p style="color: gray">${name}</p>
+                                    <p style="color: gray">Вы ещё не приняли запрос</p>
+                                </div>`
                         }
                     }
                 })
@@ -53,10 +66,10 @@ function loadSpending(){
         });
         $(".button__confirm__debt__payment")[0].addEventListener("click", () => {
             let val = Number(InputPaymentAmount.value);
-            if(InputPaymentAmount.value.trim() === "" || isNaN(val)){
+            if (InputPaymentAmount.value.trim() === "" || isNaN(val)) {
                 TextPayDebtStatus.style.color = "red";
                 TextPayDebtStatus.innerText = "Недопустимое значение суммы погашения"
-            } else if(val <= 0 || val > spending.debts[User.name]){
+            } else if (val <= 0 || val > spending.debts[User.name]) {
                 TextPayDebtStatus.style.color = "red";
                 TextPayDebtStatus.innerText = "Введите положительное число,\nне превышающее суммы долга";
             } else {
@@ -79,14 +92,14 @@ $(".button__open__debt__payment__overlay")[0].addEventListener("click", () => {
     OverlayPayDebt.style.display = "flex";
 });
 
-function sendDebtPaymentRequest(amount){
+function sendDebtPaymentRequest(amount) {
     $.ajax({
         url: `api/debts/pay?spendingId=${SpendingId}`,
         method: "patch",
         data: String(amount),
         contentType: "application/json",
         success: response => {
-            if(response.success != null){
+            if (response.success != null) {
                 TextPayDebtStatus.style.color = "green";
                 TextPayDebtStatus.innerText = response.success;
                 location.reload();

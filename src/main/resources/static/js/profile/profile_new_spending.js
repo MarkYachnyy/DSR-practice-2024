@@ -10,20 +10,18 @@ TextAddOutsiderStatus = $(".text__add__outsider__to__spending__status")[0];
 ButtonAddOutsider = $(".button__add__outsider__to__spending")[0];
 InputOutsiderName = $(".input__add__outsider__to__spending__name")[0];
 
-var Username = null;
-var UserId = null;
-var FriendsNotAddedToSpendingList = [];
-var FriendsAddedToSpendingList = [];
-var OutsidersAddedToSpendingList = [];
-var PayerName = Username;
+FriendsNotAddedToSpendingList = [];
+FriendsAddedToSpendingList = [];
+OutsidersAddedToSpendingList = [];
+PayerName = Username;
 
 $.getJSON("api/user/current", null, user => {
-    $(".span__username")[0].innerText = user.name;
     Username = user.name;
     UserId = user.id;
-    loadAllSpendings();
+    PayerName = Username;
     $(".button__create__new__spending")[0].addEventListener("click", () => {
         $(".overlay__create__new__payment")[0].style.display = "flex";
+        setOverlayAddedFriendListHTML();
     });
 });
 
@@ -34,7 +32,6 @@ $.getJSON("api/friends/all", null, friends_list => {
     for (let friend of friends_list) {
         FriendsNotAddedToSpendingList.push(friend.name);
     }
-    PayerName = Username;
     setOverlayNonAddedFriendListHTML();
     setOverlayAddedFriendListHTML();
 });

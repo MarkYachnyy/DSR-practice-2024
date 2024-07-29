@@ -26,7 +26,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/welcome", "/login", "/register").permitAll()
                         .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/profile").authenticated()
-                        .requestMatchers("/spending/**").authenticated()
+                        .requestMatchers("/spending").authenticated()
                         .requestMatchers("/api/register_user").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .requestMatchers("js/**").permitAll()
