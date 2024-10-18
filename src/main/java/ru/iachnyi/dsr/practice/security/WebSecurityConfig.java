@@ -24,7 +24,6 @@ public class WebSecurityConfig {
                 httpBasic(Customizer.withDefaults()).
                 authorizeHttpRequests(auth -> auth
                         .requestMatchers("/welcome", "/login", "/register").permitAll()
-                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/profile").authenticated()
                         .requestMatchers("/spending").authenticated()
                         .requestMatchers("/api/register_user").permitAll()

@@ -30,12 +30,12 @@ function setRegisterAjax(){
 
 function validateValues() {
     ValuesAreValid = true;
-    if(InputLogin.value.length < 5 || InputLogin.value.length > 20){
-        TextServerResponse.innerText = "Длина пароля должна быть от 5 до 20 символов";
+    if(InputLogin.value.length < 8 || InputLogin.value.length > 16){
+        TextServerResponse.innerText = "Имя пользователя должно быть от 8 до 16 символов";
         ValuesAreValid = false;
     }
     if(InputPassword.value.length < 8 || InputLogin.value.length > 16){
-        TextServerResponse.innerText = "Имя пользователя должно быть от 8 до 16 символов";
+        TextServerResponse.innerText = "Длина пароля должна быть от 8 до 16 символов";
         ValuesAreValid = false;
     }
     if(InputPassword.value !== InputPasswordConfirm.value){

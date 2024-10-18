@@ -64,7 +64,7 @@ function setSpendingsListHTML(spendings_list) {
     spendings_list.sort()
     SpanLoadingSpendingsMessage.style.display = "none";
     if (spendings_list.length > 0) {
-        let res = "";
+        DivAllSpendings.innerHTML = "";
         for (let spending of spendings_list) {
             if(CheckBoxHideZeroDebtSpendings.checked && spending.debts[Username] === 0) continue;
             let names = []
@@ -82,13 +82,29 @@ function setSpendingsListHTML(spendings_list) {
                 }
                 names_list_content += names[names.length - 1];
             }
-            res += `<div style="margin: 5px; padding: 10px; background: #EEEEEE">
-                        <h3>Счёт <a href="/spending?id=${spending.id}">${spending.name}</a> от ${spending.date}</h3>
-                        <p>${names_list_content}</p>
-                        <p>${spending.payerName === Username ? "Вы оплатили этот счёт" : "Ваш долг " + spending.debts[Username] + " ₽"}</p>
-                    </div>`
+            let spendingDiv = document.createElement("div");
+            spendingDiv.style.margin = "5px";
+            spendingDiv.style.padding = "10px";
+            spendingDiv.style.background = "#EEEEEE";
+
+            let spendingHeader = document.createElement("h3");
+            spendingHeader.appendChild(document.createTextNode("Счёт "));
+            let spendingLink = document.createElement("a");
+            spendingLink.href = `/spending?id=${spending.id}`
+            spendingLink.innerText = spending.name;
+            spendingHeader.appendChild(spendingLink);
+            spendingHeader.appendChild(document.createTextNode(` от ${spending.date}`));
+            spendingDiv.appendChild(spendingHeader);
+
+            let spendingNamesList = document.createElement("p");
+            spendingNamesList.innerText = names_list_content
+            let spendingDebtDate = document.createElement("p");
+            spendingDebtDate.innerText = spending.payerName === Username ? "Вы оплатили этот счёт" : "Ваш долг " + spending.debts[Username] + " ₽";
+            spendingDiv.appendChild(spendingDebtDate)
+
+            DivAllSpendings.appendChild(spendingDiv);
         }
-        DivAllSpendings.innerHTML = res;
+
     } else {
         DivAllSpendings.innerHTML = "<span style='color: gray;'>Вы не состоите ни в одном счёте</span>"
     }
@@ -154,7 +170,16 @@ function setDebtListHTML(debtMap){
         for(let spendingId of Object.keys(debtMap[personName])){
             let amount = debtMap[personName][spendingId]['amount'];
             let spendingName = debtMap[personName][spendingId]['name'];
-            spendingListDiv.innerHTML += `<p>Счёт <a href="/spending?id=${spendingId}">${spendingName}</a>: долг ${amount}₽</p>`;
+            let spendingP = document.createElement("p");
+            spendingP.appendChild(document.createTextNode("Счёт "));
+            let spendingA = document.createElement("a");
+            spendingA.href = `/spending?id=${spendingId}`;
+            spendingA.innerText = spendingName;
+            spendingP.appendChild(spendingA);
+            spendingP.appendChild(document.createTextNode(`: долг ${amount}₽`));
+            spendingListDiv.appendChild(spendingP)
+
+            //spendingListDiv.innerHTML += `<p>Счёт <a href="/spending?id=${spendingId}">${spendingName}</a>: долг ${amount}₽</p>`;
             totalAmount += amount;
             personAmount += amount;
         }
