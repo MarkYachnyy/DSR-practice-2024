@@ -42,19 +42,6 @@ COPY public.friends (receiver_id, sender_id, date, status) FROM stdin;
 15	14	2024-07-29	ACCEPTED
 \.
 
-
---
--- TOC entry 3352 (class 0 OID 16535)
--- Dependencies: 214
--- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.roles (id, name) FROM stdin;
-1	ROLE_USER
-2	ROLE_ADMIN
-\.
-
-
 --
 -- TOC entry 3359 (class 0 OID 16694)
 -- Dependencies: 221
@@ -85,15 +72,6 @@ COPY public.users (id, name, password) FROM stdin;
 -- TOC entry 3355 (class 0 OID 16575)
 -- Dependencies: 217
 -- Data for Name: users_roles; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.users_roles (user_id, roles_id) FROM stdin;
-14	1
-15	1
-16	1
-17	1
-18	1
-\.
 
 
 --

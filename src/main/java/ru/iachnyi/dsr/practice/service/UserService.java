@@ -1,7 +1,5 @@
 package ru.iachnyi.dsr.practice.service;
 
-import java.util.Collections;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ru.iachnyi.dsr.practice.entity.Role;
 import ru.iachnyi.dsr.practice.entity.User;
 import ru.iachnyi.dsr.practice.repository.UserRepository;
 
@@ -31,7 +28,6 @@ public class UserService implements UserDetailsService{
         if (userFromDB != null) {
             return false;
         }
-        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;

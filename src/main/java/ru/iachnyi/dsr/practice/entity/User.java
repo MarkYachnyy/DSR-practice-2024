@@ -1,9 +1,11 @@
 package ru.iachnyi.dsr.practice.entity;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
@@ -32,9 +34,6 @@ public class User implements UserDetails{
 	@Column(unique = true)
 	private String name;
 	private String password;
-	
-	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<Role> roles;
 
 	@Override
 	public String getPassword() {
@@ -43,7 +42,7 @@ public class User implements UserDetails{
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return getRoles();
+		return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
 	}
 
 	@Override

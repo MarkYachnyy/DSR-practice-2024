@@ -21,12 +21,28 @@ function loadSpending() {
         SpanSpendingPayerName.innerText = spending.payerName;
         for (let name in spending.debts) {
             if (name === spending.creatorName) {
-                DivSpendingParticipants.innerHTML +=
-                    `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
-                        <p>${name}</p>
-                        ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
-                        ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
-                    </div>`
+                let div = document.createElement("div");
+                div.style.width = "300px";
+                div.style.display = "flex";
+                div.style.justifyContent = "space-between";
+                div.style.alignItems = "center";
+                div.style.padding = "10px";
+                div.style.margin = "5px";
+                div.style.background = "#EEEEEE";
+
+                let p = document.createElement("p");
+                p.innerText = name;
+                div.appendChild(p);
+
+                if(name === spending.creatorName){
+                    div.appendChild(createWrenchImage());
+                }
+
+                if(name === spending.payerName){
+                    div.appendChild(createCrownImage());
+                }
+
+                DivSpendingParticipants.appendChild(div);
             } else {
                 $.get({
                     url: "api/friends/are-friends",
@@ -36,18 +52,65 @@ function loadSpending() {
                     },
                     success: response => {
                         if (Boolean(response)) {
-                            DivSpendingParticipants.innerHTML +=
-                                `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
-                                    <p>${name}</p>
-                                    ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
-                                    ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
-                                </div>`
+
+                            let div = document.createElement("div");
+                            div.style.width = "300px";
+                            div.style.display = "flex";
+                            div.style.justifyContent = "space-between";
+                            div.style.alignItems = "center";
+                            div.style.padding = "10px";
+                            div.style.margin = "5px";
+                            div.style.background = "#EEEEEE";
+
+                            let p = document.createElement("p");
+                            p.innerText = name;
+                            div.appendChild(p);
+
+                            if(name === spending.creatorName){
+                                div.appendChild(createWrenchImage());
+                            }
+
+                            if(name === spending.payerName) {
+                                div.appendChild(createCrownImage());
+                            } else {
+                                div.appendChild(document.createTextNode("Долг: " + spending.debts[name] + " ₽"));
+                            }
+
+                            DivSpendingParticipants.appendChild(div);
+
+                            // DivSpendingParticipants.innerHTML +=
+                            //     `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
+                            //         <p>${name}</p>
+                            //         ${name === spending.creatorName ? "<img src='icon/wrench.png' alt='C' style='width: 40px; height: 40px;'>" : ""}
+                            //         ${name === spending.payerName ? "<img src='icon/crown.png' alt='P' style='width: 40px; height: 40px;'>" : "Долг: " + spending.debts[name] + " ₽"}
+                            //     </div>`
                         } else if(User.name === spending.creatorName){
-                            DivSpendingParticipants.innerHTML +=
-                                `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
-                                    <p style="color: gray">${name}</p>
-                                    <p style="color: gray">Пользователь ещё не принял запрос</p>
-                                </div>`
+                            let div = document.createElement("div");
+                            div.style.width = "300px";
+                            div.style.display = "flex";
+                            div.style.justifyContent = "space-between";
+                            div.style.alignItems = "center";
+                            div.style.padding = "10px";
+                            div.style.margin = "5px";
+                            div.style.background = "#EEEEEE";
+
+                            let p1 = document.createElement("p");
+                            p1.style.color = "gray";
+                            p1.innerText = name;
+                            div.appendChild(p1);
+
+                            let p2 = document.createElement("p");
+                            p2.style.color = "gray";
+                            p2.innerText = "Пользователь еще не принял запрос";
+                            div.appendChild(p2);
+
+                            DivSpendingParticipants.appendChild(div);
+
+                            // DivSpendingParticipants.innerHTML +=
+                            //     `<div style="width:300px; display: flex; justify-content: space-between; align-items: center; padding: 10px; margin: 5px; background: #EEEEEE">
+                            //         <p style="color: gray">${name}</p>
+                            //         <p style="color: gray">Пользователь ещё не принял запрос</p>
+                            //     </div>`
                         } else if(User.name === name){
                             $(".button__open__debt__payment__overlay").hide();
                             DivSpendingParticipants.innerHTML +=
@@ -77,6 +140,24 @@ function loadSpending() {
             }
         })
     });
+}
+
+function createWrenchImage(){
+    let img = document.createElement("img");
+    img.src = "icon/wrench.png";
+    img.alt = "C";
+    img.style.width = "40px";
+    img.style.height = "40px";
+    return img;
+}
+
+function createCrownImage(){
+    let img = document.createElement("img");
+    img.src = "icon/crown.png";
+    img.alt = "P";
+    img.style.width = "40px";
+    img.style.height = "40px";
+    return img;
 }
 
 $.getJSON("api/user/current", null, user => {
