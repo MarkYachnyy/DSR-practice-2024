@@ -24,7 +24,19 @@ function setFriendsListHTML(friends_list) {
         DivFriends.innerHTML = "<p style='color: gray'>Пользователи в друзьях отсутвствуют</p>";
     }
     for (let friend of friends_list) {
-        DivFriends.innerHTML += `<p style="margin: 5px; padding: 10px; background: #EEEEEE">${friend.name} | <span style="color:green">в друзьях с ${friend.date}</span></p>`;
+        let p = document.createElement("p");
+        p.style.margin = "5px";
+        p.style.padding = "10px";
+        p.style.background = "#EEEEEE";
+
+        p.appendChild(document.createTextNode(friend.name + " | "));
+
+        let span = document.createElement("span");
+        span.style.color = "green";
+        span.innerText = `в друзьях с ${friend.date}`;
+        p.appendChild(span);
+
+        DivFriends.appendChild(p);
     }
 }
 
@@ -35,11 +47,30 @@ function setIncomingRequestsListHTML(request_list) {
         DivIncomingRequests.innerHTML = "<p style='color: gray'>Входящих запросов нет</p>";
     }
     for (let i = 0; i < request_list.length; i++) {
-        request = request_list[i];
-        DivIncomingRequests.innerHTML += `<div style="display: flex; flex-direction: row; margin: 5px; padding: 10px; background: #EEEEEE">
-            <p>${request.name} | <span style="color:purple">хочет добавить вас в друзья с ${request.date}</span></p>
-            <button id = "accept__friend__request__btn__${i}">Принять</button>
-        </div>`;
+        let request = request_list[i];
+
+        let div = document.createElement("div");
+        div.style.display = "flex";
+        div.style.flexDirection = "row";
+        div.style.margin = "5px";
+        div.style.padding = "10px";
+        div.style.background = "#EEEEEE";
+
+        let p = document.createElement("p");
+        p.appendChild(document.createTextNode(request.name + " | "));
+        let span = document.createElement("span");
+        span.style.color = "purple";
+        span.innerText = `хочет добавить вас в друзья с ${request.date}`;
+        p.appendChild(span);
+        div.appendChild(p);
+
+        let button = document.createElement("button");
+        button.id = `accept__friend__request__btn__${i}`;
+        button.innerText = "Принять";
+
+        div.appendChild(button);
+
+        DivIncomingRequests.appendChild(div);
     }
 
     for (let i = 0; i < request_list.length; i++) {
@@ -61,7 +92,19 @@ function setSentRequestsListHTML(request_list) {
         DivSentRequests.innerHTML = "<p style='color: gray'>Исходящих запросов нет</p>";
     }
     for (let request of request_list) {
-        DivSentRequests.innerHTML += `<p style="margin: 5px; padding: 10px; background: #EEEEEE">${request.name} | <span style="color:gray">запрос ожидает ответа с ${request.date}</span></p>`;
+        let p = document.createElement("p");
+        p.style.margin = "5px";
+        p.style.padding = "10px";
+        p.style.background = "#EEEEEE";
+
+        p.appendChild(document.createTextNode(request.name + " | "));
+
+        let span = document.createElement("span");
+        span.style.color = "gray";
+        span.innerText = `запрос ожидает ответа с ${request.date}`;
+        p.appendChild(span);
+
+        DivSentRequests.appendChild(p);
     }
 }
 

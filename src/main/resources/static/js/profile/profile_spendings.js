@@ -179,7 +179,6 @@ function setDebtListHTML(debtMap){
             spendingP.appendChild(document.createTextNode(`: долг ${amount}₽`));
             spendingListDiv.appendChild(spendingP)
 
-            //spendingListDiv.innerHTML += `<p>Счёт <a href="/spending?id=${spendingId}">${spendingName}</a>: долг ${amount}₽</p>`;
             totalAmount += amount;
             personAmount += amount;
         }
