@@ -15,13 +15,17 @@ public class SpendingService {
     @Autowired
     private SpendingRepository spendingRepository;
 
-    public void save(Spending spending) {
+    public void saveSpending(Spending spending) {
         Set<Debt> debts = spending.getDebts();
         spending.setDebts(new HashSet<>());
         Spending written = spendingRepository.save(spending);
         debts.forEach(debt -> debt.getId().setSpendingId(written.getId()));
         spending.setDebts(debts);
         spendingRepository.save(spending);
+    }
+
+    public void deleteSpending(Spending spending) {
+        spendingRepository.delete(spending);
     }
 
     public List<Spending> getAllSpendingsByUserId(Long userId) {

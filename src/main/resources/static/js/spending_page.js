@@ -8,6 +8,7 @@ OverlayPayDebt = $(".overlay__pay__debt")[0];
 ButtonWholeAmount = $(".button__set__whole__debt__amount")[0];
 InputPaymentAmount = $(".input__debt__payment__amount")[0];
 TextPayDebtStatus = $(".debt__payment__status")[0];
+OverlayDeleteSpending = $(".overlay__delete__spending")[0];
 User = null;
 
 function loadSpending() {
@@ -130,6 +131,11 @@ function loadSpending() {
         ButtonWholeAmount.addEventListener("click", () => {
             InputPaymentAmount.value = String(spending.debts[User.name]);
         });
+        if(User.name === spending.creatorName || User.name === spending.payerName){
+            $(".button__delete__spending")[0].style.display = "block";
+        } else {
+            $(".button__delete__spending")[0].style.display = "none";
+        }
         $(".button__confirm__debt__payment")[0].addEventListener("click", () => {
             let val = Number(InputPaymentAmount.value);
             if (InputPaymentAmount.value.trim() === "" || isNaN(val)) {
@@ -144,6 +150,29 @@ function loadSpending() {
         })
     });
 }
+
+$(".button__delete__spending")[0].addEventListener("click", () => {
+    OverlayDeleteSpending.style.display = "flex";
+});
+
+$(".button__cancel__delete__spending")[0].addEventListener("click", () => {
+    OverlayDeleteSpending.style.display = "none";
+});
+
+$(".button__confirm__delete__spending")[0].addEventListener("click", () => {
+    $.ajax({
+        url: `api/spendings/delete/${SpendingId}`,
+        method: "delete",
+        contentType: "application/json",
+        success: response => {
+            if (response.success != null) {
+                location.reload();
+            } else {
+
+            }
+        }
+    })
+})
 
 function createWrenchImage(){
     let img = document.createElement("img");

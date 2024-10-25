@@ -23,6 +23,19 @@
             </div>
         </div>
     </div>
+    <div class="overlay__delete__spending">
+        <div class="overlay__delete__spending__content">
+            <h2>Вы уверены?</h2>
+            <div style="display: flex; flex-direction: row; align-items: center">
+                <button class="button__cancel__delete__spending" style="background: red; color: white; padding: 10px; margin: 10px">
+                    Отмена
+                </button>
+                <button class="button__confirm__delete__spending" style="background: gray; color: white; padding: 10px; margin: 10px">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </div>
     <div class = "content" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
         <div class = "div__spending__data" style="display:flex; align-items: center; flex-direction: column;">
             <h1>Счёт "<span class="span__spending__name"></span>"</h1>
@@ -34,6 +47,7 @@
 
             </div>
             <btn class="button__open__debt__payment__overlay" style="background: plum; color: white; padding: 20px; margin: 10px;">Погасить свой долг</btn>
+            <btn class="button__delete__spending" style="background: red; color: white; padding: 20px; margin: 10px;">Удалить счёт</btn>
         </div>
     </div>
     <script type="text/javascript" src="js/spending_page.js"></script>

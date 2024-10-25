@@ -1,4 +1,4 @@
-.overlay__pay__debt{
+.overlay__pay__debt, .overlay__delete__spending{
     background-color: rgba(0,0,0,0.3);
     height: 100%;
     width: 100%;
@@ -11,7 +11,7 @@
     justify-content: space-around;
 }
 
-.overlay__pay__debt__content{
+.overlay__pay__debt__content, .overlay__delete__spending__content{
     display: flex;
     flex-direction: column;
     align-items: center;

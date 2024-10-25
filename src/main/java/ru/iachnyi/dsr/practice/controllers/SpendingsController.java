@@ -1,10 +1,8 @@
 package ru.iachnyi.dsr.practice.controllers;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.iachnyi.dsr.practice.entity.Spending;
 import ru.iachnyi.dsr.practice.entity.debt.Debt;
@@ -15,7 +13,6 @@ import ru.iachnyi.dsr.practice.security.SecurityUtils;
 import ru.iachnyi.dsr.practice.service.SpendingService;
 
 
-import java.io.IOException;
 import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,7 +41,7 @@ public class SpendingsController {
         SimpleSuccessOrErrorResponse res = new SimpleSuccessOrErrorResponse();
         Spending toSave = unboxSpending(spending);
         toSave.setId(null);
-        spendingService.save(toSave);
+        spendingService.saveSpending(toSave);
         res.setSuccess("Счёт создан!");
         return res;
     }
@@ -52,6 +49,19 @@ public class SpendingsController {
     @GetMapping("/api/spendings/{id}")
     public SpendingResponse getSpendingById(@PathVariable Long id) {
         return boxSpending(spendingService.getSpendingById(id));
+    }
+
+    @DeleteMapping("/api/spendings/delete/{id}")
+    private SimpleSuccessOrErrorResponse deleteSpending(@PathVariable Long id) {
+        SimpleSuccessOrErrorResponse res = new SimpleSuccessOrErrorResponse();
+        try {
+            Spending toDelete = spendingService.getSpendingById(id);
+            spendingService.deleteSpending(toDelete);
+            res.setSuccess("Удалено");
+        } catch (Exception e) {
+            res.setError("Ошибка");
+        }
+        return res;
     }
 
     private SpendingResponse boxSpending(Spending spending) {
