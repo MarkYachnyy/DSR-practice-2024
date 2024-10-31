@@ -35,3 +35,13 @@
 .span__my__user__id:hover{
     cursor: pointer;
 }
+.text__debt__count, .text__spending__count, .text__friends__count, .text__sent__requests__count, .text__incoming__requests__count {
+    margin-left: 10px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 30px;
+    height: 30px;
+    width: 30px;
+    border-radius: 15px;
+    background: white;
+}

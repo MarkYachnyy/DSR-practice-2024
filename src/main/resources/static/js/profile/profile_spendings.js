@@ -3,6 +3,8 @@ SpanLoadingSpendingsMessage = $(".span__spendings__loading__message")[0];
 DivAllDebts = $(".div__all__debts")[0];
 SpanTotalDebtAmount = $(".span__total__debt__amount")[0];
 CheckBoxHideZeroDebtSpendings = $("#input-check-hide-zero-debt-spendings")[0];
+TextSpendingsAmount = $(".text__spending__count")[0];
+TextDebtAmount = $(".text__debt__count")[0];
 
 Username = null;
 UserId = null;
@@ -30,7 +32,6 @@ document.querySelectorAll(".input__radio__sort__criteria").forEach(input => {
         }
     });
 });
-$("#input-sort-criteria-date-descend")[0].click();
 
 CheckBoxHideZeroDebtSpendings.addEventListener("click", () => setSpendingsListHTML(SpendingList));
 
@@ -61,11 +62,13 @@ function loadAllSpendings() {
 }
 
 function setSpendingsListHTML(spendings_list) {
-    spendings_list.sort()
+    TextDebtAmount.innerText = "0";
     SpanLoadingSpendingsMessage.style.display = "none";
+    let spending_amount = 0
     if (spendings_list.length > 0) {
         DivAllSpendings.innerHTML = "";
         for (let spending of spendings_list) {
+            spending_amount++;
             if(CheckBoxHideZeroDebtSpendings.checked && spending.debts[Username] === 0) continue;
             let names = []
             for (let name in spending.debts) {
@@ -85,6 +88,7 @@ function setSpendingsListHTML(spendings_list) {
             let spendingDiv = document.createElement("div");
             spendingDiv.style.margin = "5px";
             spendingDiv.style.padding = "10px";
+            spendingDiv.style.borderRadius = "7px";
             spendingDiv.style.background = "#EEEEEE";
 
             let spendingHeader = document.createElement("h3");
@@ -104,10 +108,10 @@ function setSpendingsListHTML(spendings_list) {
 
             DivAllSpendings.appendChild(spendingDiv);
         }
-
     } else {
         DivAllSpendings.innerHTML = "<span style='color: gray;'>Вы не состоите ни в одном счёте</span>"
     }
+    TextSpendingsAmount.innerText = spending_amount.toString();
     setDebtListHTML(getDebtMap(spendings_list));
 }
 
@@ -132,13 +136,6 @@ document.querySelectorAll(".radio__btn__distribution__method").forEach(btn => {
     });
 });
 
-$.getJSON("api/user/current", null, user => {
-    $(".span__username")[0].innerText = user.name;
-    Username = user.name;
-    UserId = user.id;
-    loadAllSpendings();
-});
-
 function getDebtMap(spending_list){
     let res = {}
     for(let spending of spending_list){
@@ -155,12 +152,14 @@ function getDebtMap(spending_list){
 function setDebtListHTML(debtMap){
     let totalAmount = 0;
     DivAllDebts.innerHTML = Object.keys(debtMap).length > 0 ? "" : "<p style='color: gray'>Долгов перед пользователями нет</p>";
+    let debt_count = 0;
     for(let personName of Object.keys(debtMap)){
         let personAmount = 0;
         let personDiv = document.createElement("div");
         personDiv.style.background = "#EEEEEE";
         personDiv.style.margin = "5px";
         personDiv.style.padding = "10px";
+        personDiv.style.borderRadius = "7px";
         let personDivHeader = document.createElement("h3");
         let expandSpendingsList = document.createElement("button");
         expandSpendingsList.style.color = "blue";
@@ -168,6 +167,7 @@ function setDebtListHTML(debtMap){
         let spendingListDiv = document.createElement("div");
         spendingListDiv.style.display = "none";
         for(let spendingId of Object.keys(debtMap[personName])){
+            debt_count++;
             let amount = debtMap[personName][spendingId]['amount'];
             let spendingName = debtMap[personName][spendingId]['name'];
             let spendingP = document.createElement("p");
@@ -197,5 +197,6 @@ function setDebtListHTML(debtMap){
         personDiv.append(spendingListDiv);
         DivAllDebts.append(personDiv);
         SpanTotalDebtAmount.innerText = totalAmount;
+        TextDebtAmount.innerText = debt_count.toString();
     }
 }

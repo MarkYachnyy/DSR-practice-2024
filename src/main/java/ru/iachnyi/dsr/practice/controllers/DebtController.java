@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.iachnyi.dsr.practice.repository.DebtRepository;
 import ru.iachnyi.dsr.practice.response_classes.SimpleSuccessOrErrorResponse;
 import ru.iachnyi.dsr.practice.security.SecurityUtils;
 import ru.iachnyi.dsr.practice.service.DebtServise;

@@ -11,7 +11,7 @@ import ru.iachnyi.dsr.practice.service.SpendingService;
 import java.util.stream.Collectors;
 
 @Controller
-public class SpendingsPageController {
+public class SpendingPageController {
 
     @Autowired
     SpendingService spendingService;
@@ -23,9 +23,9 @@ public class SpendingsPageController {
     public String getSpendingPage(@RequestParam Long id) {
         Spending spending = spendingService.getSpendingById(id);
         if(spending == null) {
-            return "redirect:/profile";
+            return "redirect:/spendings";
         } else if(!spending.getDebts().stream().map(debt -> debt.getId().getUserId()).collect(Collectors.toSet()).contains(securityUtils.getCurrentUserId())){
-            return "redirect:/profile";
+            return "redirect:/spendings";
         }
         return "spending";
     }

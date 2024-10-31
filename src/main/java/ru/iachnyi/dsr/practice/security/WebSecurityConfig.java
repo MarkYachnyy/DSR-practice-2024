@@ -24,7 +24,8 @@ public class WebSecurityConfig {
                 httpBasic(Customizer.withDefaults()).
                 authorizeHttpRequests(auth -> auth
                         .requestMatchers("/welcome", "/login", "/register").permitAll()
-                        .requestMatchers("/profile").authenticated()
+                        .requestMatchers("/friends").authenticated()
+                        .requestMatchers("/spendings").authenticated()
                         .requestMatchers("/spending").authenticated()
                         .requestMatchers("/api/register_user").permitAll()
                         .requestMatchers("/api/**").authenticated()
@@ -33,7 +34,7 @@ public class WebSecurityConfig {
                         .requestMatchers("css/**").permitAll())
 
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/profile").permitAll()).build();
+                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/spendings").permitAll()).build();
     }
 
 

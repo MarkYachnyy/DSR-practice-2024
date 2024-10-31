@@ -4,6 +4,9 @@ DivSentRequests = $(".div__sent__requests")[0];
 TextNewFriendRequestStatus = $(".text__new__request__status")[0];
 ButtonSendNewRequest = $(".button__send__friend__request")[0];
 InputNewFriendName = $(".input__add__friend__name")[0];
+TextIncomingRequestsCount = $(".text__incoming__requests__count")[0];
+TextSentRequestsCount = $(".text__sent__requests__count")[0];
+TextFriendsCount = $(".text__friends__count")[0];
 
 function getFriendsList() {
     $.getJSON("api/friends/all", null, data => setFriendsListHTML(data));
@@ -18,12 +21,15 @@ function getSentRequsts() {
 }
 
 function setFriendsListHTML(friends_list) {
+    TextFriendsCount.innerText = "0";
+    let friend_count = 0;
     if(friends_list.length > 0){
         DivFriends.innerHTML = "";
     } else {
         DivFriends.innerHTML = "<p style='color: gray'>Пользователи в друзьях отсутвствуют</p>";
     }
     for (let friend of friends_list) {
+        friend_count++;
         let p = document.createElement("p");
         p.style.margin = "5px";
         p.style.padding = "10px";
@@ -38,15 +44,19 @@ function setFriendsListHTML(friends_list) {
 
         DivFriends.appendChild(p);
     }
+    TextFriendsCount.innerText = friend_count.toString();
 }
 
 function setIncomingRequestsListHTML(request_list) {
+    TextIncomingRequestsCount.innerText = "0";
+    let request_count = 0;
     if (request_list.length > 0) {
         DivIncomingRequests.innerHTML = "";
     } else {
         DivIncomingRequests.innerHTML = "<p style='color: gray'>Входящих запросов нет</p>";
     }
     for (let i = 0; i < request_list.length; i++) {
+        request_count++;
         let request = request_list[i];
 
         let div = document.createElement("div");
@@ -83,9 +93,21 @@ function setIncomingRequestsListHTML(request_list) {
             });
         });
     }
+
+    if(request_count > 0){
+        TextIncomingRequestsCount.style.background = "red";
+        TextIncomingRequestsCount.style.color = "white";
+    } else {
+        TextIncomingRequestsCount.style.background = "white";
+        TextIncomingRequestsCount.style.color = "black";
+    }
+
+    TextIncomingRequestsCount.innerText = request_count.toString();
 }
 
 function setSentRequestsListHTML(request_list) {
+    TextSentRequestsCount.innerText = "0";
+    let request_count = 0;
     if (request_list.length > 0) {
         DivSentRequests.innerHTML = "";
     } else {
@@ -106,6 +128,7 @@ function setSentRequestsListHTML(request_list) {
 
         DivSentRequests.appendChild(p);
     }
+    TextSentRequestsCount.innerText = request_count.toString();
 }
 
 function sendFriendRequest() {
