@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 public class FriendsPageController {
     @GetMapping("/friends")
-    public String getProfilePage(Model model) {
+    public String getFriendsPage(Model model) {
         return "friends";
     }
 }

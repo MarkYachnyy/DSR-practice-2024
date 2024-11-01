@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AllSpendingsPageController {
     @GetMapping("/spendings")
-    public String getProfilePage(Model model) {
+    public String getAllSpendingsPage(Model model) {
         return "spendings";
     }
 }

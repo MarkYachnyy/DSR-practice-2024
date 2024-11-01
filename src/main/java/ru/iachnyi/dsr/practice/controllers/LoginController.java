@@ -11,7 +11,7 @@ public class LoginController {
 	@GetMapping("/login")
 	public String getLoginPage(Model model) {
 		if(SecurityContextHolder.getContext().getAuthentication() != null) {
-			return "redirect:/profile";
+			return "redirect:/spendings";
 		}
 		return "login";
 	}
