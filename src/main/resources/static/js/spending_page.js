@@ -28,6 +28,7 @@ function loadSpending() {
                 div.style.justifyContent = "space-between";
                 div.style.alignItems = "center";
                 div.style.padding = "10px";
+                div.style.borderRadius = "5px";
                 div.style.margin = "5px";
                 div.style.background = "#EEEEEE";
 
@@ -41,6 +42,8 @@ function loadSpending() {
 
                 if(name === spending.payerName){
                     div.appendChild(createCrownImage());
+                } else {
+                    div.appendChild(document.createTextNode("Долг: " + spending.debts[name] + " ₽"));
                 }
 
                 DivSpendingParticipants.appendChild(div);
@@ -61,6 +64,7 @@ function loadSpending() {
                             div.style.alignItems = "center";
                             div.style.padding = "10px";
                             div.style.margin = "5px";
+                            div.style.borderRadius = "5px";
                             div.style.background = "#EEEEEE";
 
                             let p = document.createElement("p");

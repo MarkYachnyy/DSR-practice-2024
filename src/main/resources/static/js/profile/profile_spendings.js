@@ -5,59 +5,68 @@ SpanTotalDebtAmount = $(".span__total__debt__amount")[0];
 CheckBoxHideZeroDebtSpendings = $("#input-check-hide-zero-debt-spendings")[0];
 TextSpendingsAmount = $(".text__spending__count")[0];
 TextDebtAmount = $(".text__debt__count")[0];
+TextSpendingsCurrentPage = $(".text__spendings__current__page")[0];
+ButtonSpendingsPreviousPage = $(".button__spendings__previous__page")[0];
+ButtonSpendingsNextPage = $(".button__spendings__next__page")[0];
+
+ItemsOnPage = 4;
+CurrentPage = 1;
+PageCount = 0;
 
 Username = null;
 UserId = null;
 var SpendingList = null;
 
+ButtonSpendingsNextPage.addEventListener("click" ,() => {
+    if(CurrentPage < PageCount){
+        CurrentPage++;
+        loadCurrentPageOfSpendings();
+    }
+});
+
+ButtonSpendingsPreviousPage.addEventListener("click", () => {
+    if(CurrentPage > 1){
+        CurrentPage--;
+        loadCurrentPageOfSpendings();
+    }
+})
+
 $.getJSON("api/user/current", null, user => {
     $(".span__username")[0].innerText = user.name;
     Username = user.name;
     UserId = user.id;
-    loadAllSpendings();
+    $("#input-sort-criteria-date-descend")[0].click();
 });
 
 var CurrentComparator = null;
 var ComparatorMap = new Map();
-ComparatorMap.set($("#input-sort-criteria-debt-ascend")[0].value, debtComparator);
-ComparatorMap.set($("#input-sort-criteria-debt-descend")[0].value, (s1, s2) => -debtComparator(s1, s2));
-ComparatorMap.set($("#input-sort-criteria-date-descend")[0].value, dateComparator);
-ComparatorMap.set($("#input-sort-criteria-date-ascend")[0].value, (s1, s2) => -dateComparator(s1, s2));
+ComparatorMap.set($("#input-sort-criteria-debt-ascend")[0].value, "debtasc");
+ComparatorMap.set($("#input-sort-criteria-debt-descend")[0].value, "debtdesc");
+ComparatorMap.set($("#input-sort-criteria-date-descend")[0].value, "datedesc");
+ComparatorMap.set($("#input-sort-criteria-date-ascend")[0].value, "debtasc");
 document.querySelectorAll(".input__radio__sort__criteria").forEach(input => {
     input.addEventListener("click", () => {
         CurrentComparator = ComparatorMap.get(input.value);
-        if(SpendingList != null){
-            SpendingList.sort(CurrentComparator);
-            setSpendingsListHTML(SpendingList);
-        }
+        loadCurrentPageOfSpendings();
+        loadDebts();
     });
 });
 
 CheckBoxHideZeroDebtSpendings.addEventListener("click", () => setSpendingsListHTML(SpendingList));
 
-function dateComparator(spending1, spending2){
-    if(spending1.date < spending2.date){
-        return -1;
-    } else if (spending1.date > spending2.date){
-        return 1;
-    }
-    return 0;
-}
-
-function debtComparator(spending1, spending2){
-    if(spending1.debts[Username] < spending2.debts[Username]){
-        return -1;
-    } else if (spending1.debts[Username] > spending2.debts[Username]){
-        return 1;
-    }
-    return 0;
-}
-
-function loadAllSpendings() {
+function loadCurrentPageOfSpendings() {
     SpanLoadingSpendingsMessage.style.display = "inline";
-    $.getJSON("api/spendings/all", null, spendingList => {
-        SpendingList = spendingList;
-        $("#input-sort-criteria-date-descend")[0].click();
+    $.getJSON(`api/spendings/part/${ItemsOnPage*(CurrentPage-1)}-${ItemsOnPage*CurrentPage}-${CurrentComparator}`, null, spendingList => {
+        SpendingList = spendingList.content;
+        PageCount = Math.ceil(spendingList.count/ItemsOnPage);
+        TextSpendingsCurrentPage.innerText = `Страница ${CurrentPage} из ${PageCount}`;
+        setSpendingsListHTML(spendingList.content);
+    });
+}
+
+function loadDebts(){
+    $.getJSON(`api/spendings/all`, null, spendingList => {
+        setDebtListHTML(getDebtMap(spendingList));
     });
 }
 
@@ -112,7 +121,7 @@ function setSpendingsListHTML(spendings_list) {
         DivAllSpendings.innerHTML = "<span style='color: gray;'>Вы не состоите ни в одном счёте</span>"
     }
     TextSpendingsAmount.innerText = spending_amount.toString();
-    setDebtListHTML(getDebtMap(spendings_list));
+    //setDebtListHTML(getDebtMap(spendings_list));
 }
 
 function checkCurrentDistributionMethod(){

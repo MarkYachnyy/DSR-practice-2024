@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.iachnyi.dsr.practice.entity.Spending;
 import ru.iachnyi.dsr.practice.entity.debt.Debt;
 import ru.iachnyi.dsr.practice.repository.UserRepository;
+import ru.iachnyi.dsr.practice.response_classes.Page;
 import ru.iachnyi.dsr.practice.response_classes.SimpleSuccessOrErrorResponse;
 import ru.iachnyi.dsr.practice.response_classes.SpendingResponse;
 import ru.iachnyi.dsr.practice.security.SecurityUtils;
@@ -34,6 +35,24 @@ public class SpendingsController {
     public List<SpendingResponse> getAllSpendings() {
         return spendingService.getAllSpendingsByUserId(securityUtils.getCurrentUserId()).
                 stream().map(this::boxSpending).collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/spendings/part/{from}-{to}-{sortby}")
+    public Page<SpendingResponse> getSomeSpendings(@PathVariable int from, @PathVariable int to, @PathVariable String sortby){
+        List<SpendingResponse> all = getAllSpendings();
+        String currName = securityUtils.getCurrentUserName();
+        Comparator<SpendingResponse> comparator = Comparator.comparing(SpendingResponse::getName);
+        if(sortby.equals("dateasc")){
+            comparator = Comparator.comparing(SpendingResponse::getDate);
+        } else if (sortby.equals("datedesc")){
+            comparator = (s1, s2) -> s2.getDate().compareTo(s1.getDate());
+        } else if(sortby.equals("debtasc")){
+            comparator = Comparator.comparingInt(s -> s.getDebts().get(currName));
+        } else if(sortby.equals("debtdesc")){
+            comparator = (s1, s2) -> Integer.compare(s2.getDebts().get(currName), s1.getDebts().get(currName));
+        }
+        all.sort(comparator);
+        return new Page<>(all.size(), all.subList(from, Math.min(all.size(), to)));
     }
 
     @PostMapping("/api/spendings/new")

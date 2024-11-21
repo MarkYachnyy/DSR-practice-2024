@@ -7,9 +7,34 @@ InputNewFriendName = $(".input__add__friend__name")[0];
 TextIncomingRequestsCount = $(".text__incoming__requests__count")[0];
 TextSentRequestsCount = $(".text__sent__requests__count")[0];
 TextFriendsCount = $(".text__friends__count")[0];
+TextFriendsCurrentPage = $(".text__friends__current__page")[0];
+ButtonFriendsPreviousPage = $(".button__friends__previous__page")[0];
+ButtonFriendsNextPage = $(".button__friends__next__page")[0];
+ItemsOnPage = 5;
+CurrentPage = 1;
+PageCount = 0;
+
+ButtonFriendsNextPage.addEventListener("click", () => {
+    if (CurrentPage < PageCount) {
+        CurrentPage++;
+        getFriendsList();
+    }
+});
+
+ButtonFriendsPreviousPage.addEventListener("click", () => {
+    if (CurrentPage > 1) {
+        CurrentPage--;
+        getFriendsList();
+    }
+});
 
 function getFriendsList() {
-    $.getJSON("api/friends/all", null, data => setFriendsListHTML(data));
+    $.getJSON(`api/friends/part/${ItemsOnPage * (CurrentPage - 1)}-${ItemsOnPage * (CurrentPage)}`, null, data => {
+        PageCount = Math.ceil(data.count/ItemsOnPage);
+        TextFriendsCount.innerText = data.count;
+        TextFriendsCurrentPage.innerText = `Страница ${CurrentPage} из ${PageCount}`;
+        setFriendsListHTML(data.content);
+    });
 }
 
 function getIncomingRequsts() {
@@ -21,9 +46,8 @@ function getSentRequsts() {
 }
 
 function setFriendsListHTML(friends_list) {
-    TextFriendsCount.innerText = "0";
     let friend_count = 0;
-    if(friends_list.length > 0){
+    if (friends_list.length > 0) {
         DivFriends.innerHTML = "";
     } else {
         DivFriends.innerHTML = "<p style='color: gray'>Пользователи в друзьях отсутвствуют</p>";
@@ -44,7 +68,6 @@ function setFriendsListHTML(friends_list) {
 
         DivFriends.appendChild(p);
     }
-    TextFriendsCount.innerText = friend_count.toString();
 }
 
 function setIncomingRequestsListHTML(request_list) {
@@ -94,7 +117,7 @@ function setIncomingRequestsListHTML(request_list) {
         });
     }
 
-    if(request_count > 0){
+    if (request_count > 0) {
         TextIncomingRequestsCount.style.background = "red";
         TextIncomingRequestsCount.style.color = "white";
     } else {
