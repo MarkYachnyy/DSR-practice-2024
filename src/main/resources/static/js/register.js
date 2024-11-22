@@ -54,7 +54,5 @@ function ProcessServerResponse(response){
         InputLogin.value = "";
         InputPassword.value = "";
         InputPasswordConfirm.value = "";
-        $(".link__login").show();
     }
 }
-

@@ -9,150 +9,184 @@ ButtonWholeAmount = $(".button__set__whole__debt__amount")[0];
 InputPaymentAmount = $(".input__debt__payment__amount")[0];
 TextPayDebtStatus = $(".debt__payment__status")[0];
 OverlayDeleteSpending = $(".overlay__delete__spending")[0];
+TextParticipantsCurrentPage = $(".text__participants__current__page")[0];
+
 User = null;
+Spending = null;
+ItemsOnPage = 5;
+CurrentPage = 1;
+PageCount = 0;
 
 function loadSpending() {
     $.getJSON(`/api/spendings/${SpendingId}`, null, spending => {
-        if (spending.debts[User.name] === 0) {
-            $(".button__open__debt__payment__overlay").hide();
-        }
-        SpanSpendingName.innerText = spending.name;
-        SpanSpendingDate.innerText = spending.date;
-        SpanSpendingCreatorName.innerText = spending.creatorName;
-        SpanSpendingPayerName.innerText = spending.payerName;
-        for (let name in spending.debts) {
-            if (name === spending.creatorName) {
-                let div = document.createElement("div");
-                div.style.width = "300px";
-                div.style.display = "flex";
-                div.style.justifyContent = "space-between";
-                div.style.alignItems = "center";
-                div.style.padding = "10px";
-                div.style.borderRadius = "5px";
-                div.style.margin = "5px";
-                div.style.background = "#EEEEEE";
-
-                let p = document.createElement("p");
-                p.innerText = name;
-                div.appendChild(p);
-
-                if(name === spending.creatorName){
-                    div.appendChild(createWrenchImage());
-                }
-
-                if(name === spending.payerName){
-                    div.appendChild(createCrownImage());
-                } else {
-                    div.appendChild(document.createTextNode("Долг: " + spending.debts[name] + " ₽"));
-                }
-
-                DivSpendingParticipants.appendChild(div);
-            } else {
-                $.get({
-                    url: "api/friends/are-friends",
-                    data: {
-                        name1: spending.creatorName,
-                        name2: name
-                    },
-                    success: response => {
-                        if (Boolean(response)) {
-
-                            let div = document.createElement("div");
-                            div.style.width = "300px";
-                            div.style.display = "flex";
-                            div.style.justifyContent = "space-between";
-                            div.style.alignItems = "center";
-                            div.style.padding = "10px";
-                            div.style.margin = "5px";
-                            div.style.borderRadius = "5px";
-                            div.style.background = "#EEEEEE";
-
-                            let p = document.createElement("p");
-                            p.innerText = name;
-                            div.appendChild(p);
-
-                            if(name === spending.creatorName){
-                                div.appendChild(createWrenchImage());
-                            }
-
-                            if(name === spending.payerName) {
-                                div.appendChild(createCrownImage());
-                            } else {
-                                div.appendChild(document.createTextNode("Долг: " + spending.debts[name] + " ₽"));
-                            }
-
-                            DivSpendingParticipants.appendChild(div);
-                        } else if(User.name === spending.creatorName){
-                            let div = document.createElement("div");
-                            div.style.width = "300px";
-                            div.style.display = "flex";
-                            div.style.justifyContent = "space-between";
-                            div.style.alignItems = "center";
-                            div.style.padding = "10px";
-                            div.style.margin = "5px";
-                            div.style.background = "#EEEEEE";
-
-                            let p1 = document.createElement("p");
-                            p1.style.color = "gray";
-                            p1.innerText = name;
-                            div.appendChild(p1);
-
-                            let p2 = document.createElement("p");
-                            p2.style.color = "gray";
-                            p2.innerText = "Пользователь еще не принял запрос";
-                            div.appendChild(p2);
-
-                            DivSpendingParticipants.appendChild(div);
-                        } else if(User.name === name){
-                            $(".button__open__debt__payment__overlay").hide();
-
-                            let div = document.createElement("div");
-                            div.style.width = "300px";
-                            div.style.display = "flex";
-                            div.style.justifyContent = "space-between";
-                            div.style.alignItems = "center";
-                            div.style.padding = "10px";
-                            div.style.margin = "5px";
-                            div.style.background = "#EEEEEE";
-
-                            let p1 = document.createElement("p");
-                            p1.style.color = "gray";
-                            p1.innerText = name;
-                            div.appendChild(p1);
-
-                            let p2 = document.createElement("p");
-                            p2.style.color = "gray";
-                            p2.innerText = "Вы еще не приняли запрос";
-                            div.appendChild(p2);
-
-                            DivSpendingParticipants.appendChild(div);
-                        }
-                    }
-                })
-            }
-        }
-        ButtonWholeAmount.innerText = `Все ${spending.debts[User.name]} ₽`;
-        ButtonWholeAmount.addEventListener("click", () => {
-            InputPaymentAmount.value = String(spending.debts[User.name]);
-        });
-        if(User.name === spending.creatorName || User.name === spending.payerName){
-            $(".button__delete__spending")[0].style.display = "block";
-        } else {
-            $(".button__delete__spending")[0].style.display = "none";
-        }
-        $(".button__confirm__debt__payment")[0].addEventListener("click", () => {
-            let val = Number(InputPaymentAmount.value);
-            if (InputPaymentAmount.value.trim() === "" || isNaN(val)) {
-                TextPayDebtStatus.style.color = "red";
-                TextPayDebtStatus.innerText = "Недопустимое значение суммы погашения"
-            } else if (val <= 0 || val > spending.debts[User.name]) {
-                TextPayDebtStatus.style.color = "red";
-                TextPayDebtStatus.innerText = "Введите положительное число,\nне превышающее суммы долга";
-            } else {
-                sendDebtPaymentRequest(val);
-            }
-        })
+        Spending = spending;
+        setSpendingDataHTML();
     });
+}
+
+function setSpendingDataHTML(){
+    DivSpendingParticipants.innerHTML = "";
+    let spending = Spending;
+    if (spending.debts[User.name] === 0) {
+        $(".button__open__debt__payment__overlay").hide();
+    }
+    SpanSpendingName.innerText = spending.name;
+    SpanSpendingDate.innerText = spending.date;
+    SpanSpendingCreatorName.innerText = spending.creatorName;
+    SpanSpendingPayerName.innerText = spending.payerName;
+    let i = 0;
+    for (let name in spending.debts) {
+        if (i < (CurrentPage - 1) * ItemsOnPage || i >= CurrentPage * ItemsOnPage){
+            i++;
+            continue;
+        }
+        i++;
+        if (name === spending.creatorName) {
+            let div = document.createElement("div");
+            div.style.width = "300px";
+            div.style.display = "flex";
+            div.style.justifyContent = "space-between";
+            div.style.alignItems = "center";
+            div.style.padding = "10px";
+            div.style.borderRadius = "5px";
+            div.style.margin = "5px";
+            div.style.background = "#EEEEEE";
+
+            let p = document.createElement("p");
+            p.innerText = name;
+            div.appendChild(p);
+
+            if(name === spending.creatorName){
+                div.appendChild(createWrenchImage());
+            }
+
+            if(name === spending.payerName){
+                div.appendChild(createCrownImage());
+            } else {
+                div.appendChild(document.createTextNode("Долг: " + spending.debts[name] + " ₽"));
+            }
+
+            DivSpendingParticipants.appendChild(div);
+        } else {
+            $.get({
+                url: "api/friends/are-friends",
+                data: {
+                    name1: spending.creatorName,
+                    name2: name
+                },
+                success: response => {
+                    if (Boolean(response)) {
+
+                        let div = document.createElement("div");
+                        div.style.width = "300px";
+                        div.style.display = "flex";
+                        div.style.justifyContent = "space-between";
+                        div.style.alignItems = "center";
+                        div.style.padding = "10px";
+                        div.style.margin = "5px";
+                        div.style.borderRadius = "5px";
+                        div.style.background = "#EEEEEE";
+
+                        let p = document.createElement("p");
+                        p.innerText = name;
+                        div.appendChild(p);
+
+                        if(name === spending.creatorName){
+                            div.appendChild(createWrenchImage());
+                        }
+
+                        if(name === spending.payerName) {
+                            div.appendChild(createCrownImage());
+                        } else {
+                            div.appendChild(document.createTextNode("Долг: " + spending.debts[name] + " ₽"));
+                        }
+
+                        DivSpendingParticipants.appendChild(div);
+                    } else if(User.name === spending.creatorName){
+                        let div = document.createElement("div");
+                        div.style.width = "300px";
+                        div.style.display = "flex";
+                        div.style.justifyContent = "space-between";
+                        div.style.alignItems = "center";
+                        div.style.padding = "10px";
+                        div.style.margin = "5px";
+                        div.style.background = "#EEEEEE";
+
+                        let p1 = document.createElement("p");
+                        p1.style.color = "gray";
+                        p1.innerText = name;
+                        div.appendChild(p1);
+
+                        let p2 = document.createElement("p");
+                        p2.style.color = "gray";
+                        p2.innerText = "Пользователь еще не принял запрос";
+                        div.appendChild(p2);
+
+                        DivSpendingParticipants.appendChild(div);
+                    } else if(User.name === name){
+                        $(".button__open__debt__payment__overlay").hide();
+
+                        let div = document.createElement("div");
+                        div.style.width = "300px";
+                        div.style.display = "flex";
+                        div.style.justifyContent = "space-between";
+                        div.style.alignItems = "center";
+                        div.style.padding = "10px";
+                        div.style.margin = "5px";
+                        div.style.background = "#EEEEEE";
+
+                        let p1 = document.createElement("p");
+                        p1.style.color = "gray";
+                        p1.innerText = name;
+                        div.appendChild(p1);
+
+                        let p2 = document.createElement("p");
+                        p2.style.color = "gray";
+                        p2.innerText = "Вы еще не приняли запрос";
+                        div.appendChild(p2);
+
+                        DivSpendingParticipants.appendChild(div);
+                    }
+                }
+            });
+        }
+    }
+    console.log("i is " + i);
+    PageCount = Math.ceil(i / ItemsOnPage);
+    TextParticipantsCurrentPage.innerText = `Страница ${CurrentPage} из ${PageCount}`;
+    ButtonWholeAmount.innerText = `Все ${spending.debts[User.name]} ₽`;
+    ButtonWholeAmount.addEventListener("click", () => {
+        InputPaymentAmount.value = String(spending.debts[User.name]);
+    });
+    if(User.name === spending.creatorName || User.name === spending.payerName){
+        $(".button__delete__spending")[0].style.display = "block";
+    } else {
+        $(".button__delete__spending")[0].style.display = "none";
+    }
+    $(".button__confirm__debt__payment")[0].addEventListener("click", () => {
+        let val = Number(InputPaymentAmount.value);
+        if (InputPaymentAmount.value.trim() === "" || isNaN(val)) {
+            TextPayDebtStatus.style.color = "red";
+            TextPayDebtStatus.innerText = "Недопустимое значение суммы погашения"
+        } else if (val <= 0 || val > spending.debts[User.name]) {
+            TextPayDebtStatus.style.color = "red";
+            TextPayDebtStatus.innerText = "Введите положительное число,\nне превышающее суммы долга";
+        } else {
+            sendDebtPaymentRequest(val);
+        }
+    });
+    $(".button__participants__next__page")[0].addEventListener('click', () => {
+        if(CurrentPage < PageCount){
+            CurrentPage++;
+            setSpendingDataHTML();
+        }
+    });
+    $(".button__participants__previous__page")[0].addEventListener("click", () => {
+        if(CurrentPage > 1){
+            CurrentPage--;
+            setSpendingDataHTML();
+        }
+    })
 }
 
 $(".button__delete__spending")[0].addEventListener("click", () => {
