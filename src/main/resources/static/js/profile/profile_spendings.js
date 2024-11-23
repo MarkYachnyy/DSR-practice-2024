@@ -59,6 +59,9 @@ function loadCurrentPageOfSpendings() {
     $.getJSON(`api/spendings/part/${ItemsOnPage*(CurrentPage-1)}-${ItemsOnPage*CurrentPage}-${CurrentComparator}`, null, spendingList => {
         SpendingList = spendingList.content;
         PageCount = Math.ceil(spendingList.count/ItemsOnPage);
+        if(PageCount === 0){
+            PageCount++;
+        }
         TextSpendingsCurrentPage.innerText = `Страница ${CurrentPage} из ${PageCount}`;
         setSpendingsListHTML(spendingList.content);
     });

@@ -83,6 +83,24 @@ public class SpendingsController {
         return res;
     }
 
+    @PatchMapping("/api/spendings/rename/{id}")
+    private SimpleSuccessOrErrorResponse renameSpending(@PathVariable Long id, @RequestBody String newName) {
+        SimpleSuccessOrErrorResponse res = new SimpleSuccessOrErrorResponse();
+        try{
+            Spending existing = spendingService.getSpendingById(id);
+            if(existing == null){
+                res.setError("Unknown error");
+                return res;
+            }
+            existing.setName(newName);
+            spendingService.saveSpending(existing);
+        } catch (Exception e){
+            res.setError("Error occurred");
+        }
+        res.setSuccess("Rename successful");
+        return res;
+    }
+
     private SpendingResponse boxSpending(Spending spending) {
         SpendingResponse spendingResponse = new SpendingResponse();
         spendingResponse.setId(spending.getId());

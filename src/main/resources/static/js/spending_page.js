@@ -10,6 +10,10 @@ InputPaymentAmount = $(".input__debt__payment__amount")[0];
 TextPayDebtStatus = $(".debt__payment__status")[0];
 OverlayDeleteSpending = $(".overlay__delete__spending")[0];
 TextParticipantsCurrentPage = $(".text__participants__current__page")[0];
+ButtonChangeSpendingName = $(".button__rename__spending")[0];
+InputSpendingNewName = $(".input__spending__new__name")[0];
+ButtonCancelRenameSpending = $(".button__cancel__rename__spending")[0];
+HeaderSpendingName = $(".header__spending__name")[0];
 
 User = null;
 Spending = null;
@@ -24,9 +28,46 @@ function loadSpending() {
     });
 }
 
+ButtonChangeSpendingName.addEventListener("click", () => {
+    if(ButtonCancelRenameSpending.style.display === "none"){
+        InputSpendingNewName.style.display = "inline";
+        ButtonCancelRenameSpending.style.display = "inline";
+        InputSpendingNewName.value = Spending.name;
+        HeaderSpendingName.style.display ="none";
+        $(".image__button__rename__spending")[0].src="icon/check.png";
+    } else {
+        if(InputSpendingNewName.value === ''){
+            return;
+        }
+        $.ajax({
+            url: `api/spendings/rename/${SpendingId}`,
+            method: "patch",
+            data: String(InputSpendingNewName.value),
+            contentType: "application/json",
+            success: response => {
+                if (response.success != null) {
+                    location.reload();
+                } else {
+
+                }
+            }
+        })
+    }
+});
+
+ButtonCancelRenameSpending.addEventListener('click', () => {
+    InputSpendingNewName.style.display = "none";
+    ButtonCancelRenameSpending.style.display = "none";
+    HeaderSpendingName.style.display = "inline";
+    $(".image__button__rename__spending")[0].src="icon/pen.png";
+})
+
 function setSpendingDataHTML(){
     DivSpendingParticipants.innerHTML = "";
     let spending = Spending;
+    if(User.name === spending.payerName || User.name === spending.creatorName){
+        ButtonChangeSpendingName.style.display = "inline";
+    }
     if (spending.debts[User.name] === 0) {
         $(".button__open__debt__payment__overlay").hide();
     }

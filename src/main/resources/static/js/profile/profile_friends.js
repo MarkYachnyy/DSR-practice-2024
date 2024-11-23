@@ -32,6 +32,9 @@ function getFriendsList() {
     $.getJSON(`api/friends/part/${ItemsOnPage * (CurrentPage - 1)}-${ItemsOnPage * (CurrentPage)}`, null, data => {
         PageCount = Math.ceil(data.count/ItemsOnPage);
         TextFriendsCount.innerText = data.count;
+        if(PageCount === 0){
+            PageCount++;
+        }
         TextFriendsCurrentPage.innerText = `Страница ${CurrentPage} из ${PageCount}`;
         setFriendsListHTML(data.content);
     });
